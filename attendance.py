@@ -12,7 +12,7 @@ root =Tk()
 root.title("Login Page")
 root.configure(background='#EAF8F8')
 
-mydb = mysql.connector.connect(buffered=True,
+mydb = mysql.connector.connect(buffered=True,#Used buffered because i am using fetchall and fetchall reqires its buffered  to be cleaned each time it iterates
     host = "localhost",
     user = "root",
     passwd = "pradeep",
@@ -34,8 +34,8 @@ def submit():
                 usn_no = username_entry.get()
                 password = password_entry.get()
                 my_cursor = mydb.cursor()
-                sel_string ="SELECT password,role FROM login WHERE usn = %s"
-                my_cursor.execute(sel_string,(usn_no,))#Variables should be given with tuple
+                querry_string ="SELECT password,role FROM login WHERE usn = %s"
+                my_cursor.execute(querry_string,(usn_no,))#Variables should be given with tuple
                 record = my_cursor.fetchall()# gives tuple inside list
                 if record[0][0]==password:
 
@@ -212,21 +212,12 @@ def submit():
 
                     elif record[0][1] =="M":
                                             
-                        sem_no = [
-                                "1 sem",
-                                "2 sem",
-                                "3 sem",
-                                "4 sem",
-                                "5 sem",
-                                "6 sem",
-                                "7 sem",
-                                "8 sem",
-                            ]
+                        # sem_no = list(range(1,9))
 
-                        section = [
-                                "A",
-                                "B"
-                            ]
+                        # section = [
+                        #         "A",
+                        #         "B"
+                        #     ]
                         role =[
                             "Student",
                             "Lecture",
@@ -242,10 +233,70 @@ def submit():
                             add_records_window.title("Add records")
                             add_records_window.geometry("600x800")
                             add_records_window.configure(background='#EAF8F8')
+                            
 
                             def submit():
-                                return
+                               
+                                if var.get()==1 :
+                                    if name_entry.get() =="" or usn_entry.get() =="" or address_entry.get()=="" or sem_entry.get()=="" or section_entry.get()=="" or email_entry.get()=="" or phone_entry.get()=="" :
+                                        messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
+                                    else:
+                                        try:
+                                            
+                                            query_string = "INSERT INTO student_details (name, usn, sem, sec, address, email, phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                                            value=(name_entry.get(),usn_entry.get(),sem_entry.get(),section_entry.get(),address_entry.get(),email_entry.get(),phone_entry.get())
+                                            my_cursor.execute(query_string,value)
+
+                                            mydb.commit()
+                                            response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
+                                            add_records_window.destroy()
+                                            
+                                                
+                                        except:
+                                            messagebox.showerror("Invalid","Record already exists",parent = add_records_window)
                             
+
+
+                                elif var.get()==2:
+                                    # print(2)
+                                    if Lname_entry.get() =="" or Lusn_entry.get() =="" or  Lphone_entry.get()=="" or Lemail_entry.get()=="" or Laddress_entry.get()==""  :
+                                        messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
+                                    else:
+                                        try:
+                                            
+                                            query_string = "INSERT INTO lecture_details (name, ssid, phone, email,address ) VALUES (%s, %s, %s, %s, %s)"
+                                            value=(Lname_entry.get(),Lusn_entry.get(),Lphone_entry.get(),Lemail_entry.get(),Laddress_entry.get())
+                                            my_cursor.execute(query_string,value)
+
+                                            mydb.commit()
+                                            response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
+                                            add_records_window.destroy()
+                                            
+                                                
+                                        except:
+                                            messagebox.showerror("Invalid","Record already exists",parent = add_records_window)
+                            
+
+
+                                elif var.get()==3:
+                                    if Mname_entry.get() =="" or Musn_entry.get() =="" or  Mphone_entry.get()=="" or Memail_entry.get()=="" or Maddress_entry.get()==""  :
+                                        messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
+                                    else:
+                                        try:
+                                            
+                                            query_string = "INSERT INTO admin_details (name, aid, phone, email,address ) VALUES (%s, %s, %s, %s, %s)"
+                                            value=(Mname_entry.get(),Musn_entry.get(),Mphone_entry.get(),Memail_entry.get(),Maddress_entry.get())
+                                            my_cursor.execute(query_string,value)
+
+                                            mydb.commit()
+                                            response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
+                                            add_records_window.destroy()
+                                            
+                                                
+                                        except:
+                                            messagebox.showerror("Invalid","Record already exists",parent = add_records_window)
+                            
+                                
                             def add_photo():
                                 global photo
                                 pic_frame.filename = filedialog.askopenfilename(initialdir=r"C:\\Users\\pc\\Desktop\\Dbms\\USN_Photos",title = "Select Photo",filetypes=(("jpg file","*.jpg"),("All files","*.*")))
@@ -255,8 +306,21 @@ def submit():
                                 
 
                                 
-                            def selected(event):
-                                return
+                            # def section_selected(event):
+                            #     global section_click
+                            #     section_click = section_cliked.get()
+                            #     # return section_click
+                            #     print(section_click)
+
+                            # def class_selected(event):
+                            #     global class_click
+                            #     class_click = class_clicked.get()
+                            #     # return class_click
+                            #     print(class_click)
+
+
+
+                                
 
                             add_details_frame = Frame(add_records_window, height="800", width="1000", bg="white")
                             add_details_frame.pack(side=TOP, expand=YES)
@@ -291,7 +355,16 @@ def submit():
                             radio_frame.grid(row=0,column=0)
 
                             def student_detais():
+                                global name_entry
+                                global usn_entry
+                                global sem_entry
+                                global section_entry
+                                global address_entry
+                                global email_entry
+                                global phone_entry
+
                                 global text_frame
+
                                 text_frame = Frame(text_frame_header,bg="white")
                                 name_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
                                 name_label.grid(row=1, column=0)
@@ -306,24 +379,33 @@ def submit():
                                 sem_label = Label(text_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
                                 sem_label.grid(row=3, column=0)
 
-                                class_cliked = StringVar()
-                                class_cliked.set(sem_no[0])
+                                sem_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                sem_entry.grid(row=3, column=1)
 
-                                class_combo = ttk.Combobox(text_frame,value =sem_no,font=('Lobster 14 bold'),width="20")
-                                class_combo.current(0)
-                                class_combo.bind("<<ComboboxSelected>>", selected)
-                                class_combo.grid(row=3, column=1, columnspan=20)
+                                # class_clicked = StringVar()
+                                # class_clicked.set(sem_no[0])
+
+                                # class_combo = ttk.Combobox(text_frame,value =sem_no,font=('Lobster 14 bold'),width="20")
+                                # class_combo.current(0)
+                                # class_combo.bind("<<ComboboxSelected>>", class_selected)
+                                # class_combo.grid(row=3, column=1, columnspan=20)
+
+                                
 
                                 section_label = Label(text_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
                                 section_label.grid(row=4, column=0)
 
-                                section_clicked = StringVar()
-                                section_clicked.set(section[0])
+                                section_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                section_entry.grid(row=4, column=1)
 
-                                section_combo = ttk.Combobox(text_frame,value =section,font=('Lobster 14 bold'),width="20")
-                                section_combo.current(0)
-                                section_combo.bind("<<ComboboxSelected>>", selected)
-                                section_combo.grid(row=4, column=1)
+
+                                # section_cliked = StringVar()
+                                # section_cliked.set(section[0])
+
+                                # section_combo = ttk.Combobox(text_frame,value =section,font=('Lobster 14 bold'),width="20")
+                                # section_combo.current(0)
+                                # section_combo.bind("<<ComboboxSelected>>", section_selected)
+                                # section_combo.grid(row=4, column=1)
 
                                 address_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
                                 address_label.grid(row=5, column=0)
@@ -342,10 +424,10 @@ def submit():
                                 phone_entry.grid(row=7, column=1)
 
 
-                                secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
-                                secret_key_label.grid(row=8,column=0)
-                                secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                secret_key_entry.grid(row=8, column=1)
+                                # secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
+                                # secret_key_label.grid(row=8,column=0)
+                                # secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                # secret_key_entry.grid(row=8, column=1)
 
                                 submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
                                 submit_button.grid(row=9, column=1)
@@ -354,38 +436,43 @@ def submit():
 
 
                             def lecture_details():
+                                global Lname_entry
+                                global Lusn_entry
+                                global Lphone_entry
+                                global Lemail_entry
+                                global Laddress_entry
                                 global text_frame
                                 text_frame.destroy()
                                 text_frame = Frame(text_frame_header,bg="white")
                                 name_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
                                 name_label.grid(row=1, column=0)
-                                name_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                name_entry.grid(row=1, column=1)
+                                Lname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Lname_entry.grid(row=1, column=1)
 
                                 usn_label = Label(text_frame,text="SSID", font=('Lobster 15 bold'),pady=10,bg='white')
                                 usn_label.grid(row=2, column=0)
-                                usn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                usn_entry.grid(row=2, column=1)
+                                Lusn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Lusn_entry.grid(row=2, column=1)
                             
                                 phone_label = Label(text_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
                                 phone_label.grid(row=3, column=0)
-                                phone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                phone_entry.grid(row=3, column=1)
+                                Lphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Lphone_entry.grid(row=3, column=1)
 
                                 email_label = Label(text_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
                                 email_label.grid(row=4, column=0)
-                                email_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                email_entry.grid(row=4, column=1)
+                                Lemail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Lemail_entry.grid(row=4, column=1)
                                 
                                 address_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
                                 address_label.grid(row=5, column=0)
-                                address_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                address_entry.grid(row=5, column=1)
+                                Laddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Laddress_entry.grid(row=5, column=1)
 
-                                secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
-                                secret_key_label.grid(row=6,column=0)
-                                secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                secret_key_entry.grid(row=6, column=1)
+                                # secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
+                                # secret_key_label.grid(row=6,column=0)
+                                # secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                # secret_key_entry.grid(row=6, column=1)
 
                                 submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
                                 submit_button.grid(row=7, column=1)
@@ -393,39 +480,44 @@ def submit():
                                 text_frame.grid(row=1, column=0)
 
                             def maintainer_details():
+                                global Mname_entry
+                                global Musn_entry
+                                global Mphone_entry
+                                global Memail_entry
+                                global Maddress_entry
                                 global text_frame
                                 text_frame.destroy()
                                 text_frame = Frame(text_frame_header,bg="white")
 
                                 name_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
                                 name_label.grid(row=1, column=0)
-                                name_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                name_entry.grid(row=1, column=1)
+                                Mname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Mname_entry.grid(row=1, column=1)
 
                                 usn_label = Label(text_frame,text="MID", font=('Lobster 15 bold'),pady=10,bg='white')
                                 usn_label.grid(row=2, column=0)
-                                usn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                usn_entry.grid(row=2, column=1)
+                                Musn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Musn_entry.grid(row=2, column=1)
 
                                 phone_label = Label(text_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
                                 phone_label.grid(row=3, column=0)
-                                phone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                phone_entry.grid(row=3, column=1)
+                                Mphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Mphone_entry.grid(row=3, column=1)
 
                                 email_label = Label(text_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
                                 email_label.grid(row=4, column=0)
-                                email_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                email_entry.grid(row=4, column=1)
+                                Memail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Memail_entry.grid(row=4, column=1)
                                 
                                 address_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
                                 address_label.grid(row=5, column=0)
-                                address_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                address_entry.grid(row=5, column=1)
+                                Maddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                Maddress_entry.grid(row=5, column=1)
 
-                                secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
-                                secret_key_label.grid(row=6,column=0)
-                                secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                secret_key_entry.grid(row=6, column=1)
+                                # secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
+                                # secret_key_label.grid(row=6,column=0)
+                                # secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                # secret_key_entry.grid(row=6, column=1)
 
                                 submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
                                 submit_button.grid(row=7, column=1)
@@ -489,13 +581,13 @@ def submit():
                             section_label = Label(usn_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
                             section_label.grid(row=2, column=0)
 
-                            section_clicked = StringVar()
-                            section_clicked.set(section[0])
+                            sec_clicked = StringVar()
+                            sec_clicked.set(section[0])
 
-                            section_combo = ttk.Combobox(usn_frame,value =section,font=('Lobster 14 bold'),width="20")
-                            section_combo.current(0)
-                            section_combo.bind("<<ComboboxSelected>>", selected)
-                            section_combo.grid(row=2, column=1) 
+                            sec_combo = ttk.Combobox(usn_frame,value =section,font=('Lobster 14 bold'),width="20")
+                            sec_combo.current(0)
+                            sec_combo.bind("<<ComboboxSelected>>", selected)
+                            sec_combo.grid(row=2, column=1) 
 
                             subcode_label = Label(usn_frame,text="Subcode", font=('Lobster 15 bold'),pady=10,bg='white')
                             subcode_label.grid(row=3, column=0) 
@@ -646,3 +738,5 @@ show_login_frame()
 root.state("zoomed")
 
 root.mainloop()
+
+# 4VP19CS016
