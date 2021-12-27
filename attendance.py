@@ -61,7 +61,7 @@ def submit():
                                 exit()
                                 
                         global img
-                        print(record[0][2])
+                        # print(record[0][2])
                         login_frame.destroy()
                         signup_frame = Frame(root,bg="white", height="500", width="1000")
                         signup_frame.pack(side=TOP, expand=YES)
@@ -304,14 +304,20 @@ def submit():
                                 def submit():
                                 
                                     if var.get()==1 :
-                                        if name_entry.get() =="" or usn_entry.get() =="" or address_entry.get()=="" or sem_entry.get()=="" or section_entry.get()=="" or email_entry.get()=="" or phone_entry.get()=="" :
+                                        if Sname_entry.get() =="" or Susn_entry.get() =="" or Saddress_entry.get()=="" or Ssem_entry.get()=="" or Ssection_entry.get()=="" or Semail_entry.get()=="" or Sphone_entry.get()=="" or Ssecret_key_entry.get()=="":
                                             messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
                                         else:
                                             try:
-                                                
+                                                query_string = "INSERT INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
+                                                my_cursor.execute(query_string,(Susn_entry.get(),Ssecret_key_entry.get(),"S",Ssecret_key_entry.get()))
+
+                                                mydb.commit()
+
                                                 query_string = "INSERT INTO student_details (name, usn, sem, sec, address, email, phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                                                value=(name_entry.get(),usn_entry.get(),sem_entry.get(),section_entry.get(),address_entry.get(),email_entry.get(),phone_entry.get())
+                                                value=(Sname_entry.get(),Susn_entry.get(),Ssem_entry.get(),Ssection_entry.get(),Saddress_entry.get(),Semail_entry.get(),Sphone_entry.get())
                                                 my_cursor.execute(query_string,value)
+
+                                                
 
                                                 mydb.commit()
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
@@ -325,10 +331,15 @@ def submit():
 
                                     elif var.get()==2:
                                         # print(2)
-                                        if Lname_entry.get() =="" or Lusn_entry.get() =="" or  Lphone_entry.get()=="" or Lemail_entry.get()=="" or Laddress_entry.get()==""  :
+                                        if Lname_entry.get() =="" or Lusn_entry.get() =="" or  Lphone_entry.get()=="" or Lemail_entry.get()=="" or Laddress_entry.get()==""  or Lsecret_key_entry.get()=="":
                                             messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
                                         else:
                                             try:
+                                                query_string = "INSERT INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
+                                                my_cursor.execute(query_string,(Lusn_entry.get(),Lsecret_key_entry.get(),"L",Lsecret_key_entry.get()))
+
+                                                mydb.commit()
+
                                                 
                                                 query_string = "INSERT INTO lecture_details (name, ssid, phone, email,address ) VALUES (%s, %s, %s, %s, %s)"
                                                 value=(Lname_entry.get(),Lusn_entry.get(),Lphone_entry.get(),Lemail_entry.get(),Laddress_entry.get())
@@ -345,10 +356,15 @@ def submit():
 
 
                                     elif var.get()==3:
-                                        if Mname_entry.get() =="" or Musn_entry.get() =="" or  Mphone_entry.get()=="" or Memail_entry.get()=="" or Maddress_entry.get()==""  :
+                                        if Mname_entry.get() =="" or Musn_entry.get() =="" or  Mphone_entry.get()=="" or Memail_entry.get()=="" or Maddress_entry.get()=="" or Msecret_key_entry.get()=="" :
                                             messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
                                         else:
                                             try:
+                                                query_string = "INSERT INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
+                                                my_cursor.execute(query_string,(Musn_entry.get(),Msecret_key_entry.get(),"M",Msecret_key_entry.get()))
+
+                                                mydb.commit()
+
                                                 
                                                 query_string = "INSERT INTO admin_details (name, aid, phone, email,address ) VALUES (%s, %s, %s, %s, %s)"
                                                 value=(Mname_entry.get(),Musn_entry.get(),Mphone_entry.get(),Memail_entry.get(),Maddress_entry.get())
@@ -421,32 +437,33 @@ def submit():
                                 radio_frame.grid(row=0,column=0)
 
                                 def student_detais():
-                                    global name_entry
-                                    global usn_entry
-                                    global sem_entry
-                                    global section_entry
-                                    global address_entry
-                                    global email_entry
-                                    global phone_entry
+                                    global Sname_entry
+                                    global Susn_entry
+                                    global Ssem_entry
+                                    global Ssection_entry
+                                    global Saddress_entry
+                                    global Semail_entry
+                                    global Sphone_entry
+                                    global Ssecret_key_entry
 
                                     global text_frame
 
                                     text_frame = Frame(text_frame_header,bg="white")
-                                    name_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
-                                    name_label.grid(row=1, column=0)
-                                    name_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                    name_entry.grid(row=1, column=1)
+                                    Sname_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Sname_label.grid(row=1, column=0)
+                                    Sname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Sname_entry.grid(row=1, column=1)
 
-                                    usn_label = Label(text_frame,text="USN", font=('Lobster 15 bold'),pady=10,bg='white')
-                                    usn_label.grid(row=2, column=0)
-                                    usn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                    usn_entry.grid(row=2, column=1)
+                                    Susn_label = Label(text_frame,text="USN", font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Susn_label.grid(row=2, column=0)
+                                    Susn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Susn_entry.grid(row=2, column=1)
 
-                                    sem_label = Label(text_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
-                                    sem_label.grid(row=3, column=0)
+                                    Ssem_label = Label(text_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Ssem_label.grid(row=3, column=0)
 
-                                    sem_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                    sem_entry.grid(row=3, column=1)
+                                    Ssem_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Ssem_entry.grid(row=3, column=1)
 
                                     # class_clicked = StringVar()
                                     # class_clicked.set(sem_no[0])
@@ -458,11 +475,11 @@ def submit():
 
                                     
 
-                                    section_label = Label(text_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
-                                    section_label.grid(row=4, column=0)
+                                    Ssection_label = Label(text_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Ssection_label.grid(row=4, column=0)
 
-                                    section_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                    section_entry.grid(row=4, column=1)
+                                    Ssection_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Ssection_entry.grid(row=4, column=1)
 
 
                                     # section_cliked = StringVar()
@@ -473,27 +490,27 @@ def submit():
                                     # section_combo.bind("<<ComboboxSelected>>", section_selected)
                                     # section_combo.grid(row=4, column=1)
 
-                                    address_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
-                                    address_label.grid(row=5, column=0)
-                                    address_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                    address_entry.grid(row=5, column=1)
+                                    Saddress_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Saddress_label.grid(row=5, column=0)
+                                    Saddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Saddress_entry.grid(row=5, column=1)
 
-                                    email_label = Label(text_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
-                                    email_label.grid(row=6, column=0)
-                                    email_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                    email_entry.grid(row=6, column=1)
-
-
-                                    phone_label = Label(text_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
-                                    phone_label.grid(row=7, column=0)
-                                    phone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
-                                    phone_entry.grid(row=7, column=1)
+                                    Semail_label = Label(text_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Semail_label.grid(row=6, column=0)
+                                    Semail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Semail_entry.grid(row=6, column=1)
 
 
-                                    # secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
-                                    # secret_key_label.grid(row=8,column=0)
-                                    # secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                    # secret_key_entry.grid(row=8, column=1)
+                                    Sphone_label = Label(text_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Sphone_label.grid(row=7, column=0)
+                                    Sphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Sphone_entry.grid(row=7, column=1)
+
+
+                                    Ssecret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Ssecret_key_label.grid(row=8,column=0)
+                                    Ssecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Ssecret_key_entry.grid(row=8, column=1)
 
                                     submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
                                     submit_button.grid(row=9, column=1)
@@ -508,6 +525,8 @@ def submit():
                                     global Lemail_entry
                                     global Laddress_entry
                                     global text_frame
+                                    global Lsecret_key_entry
+
                                     text_frame.destroy()
                                     text_frame = Frame(text_frame_header,bg="white")
                                     name_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
@@ -535,10 +554,10 @@ def submit():
                                     Laddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
                                     Laddress_entry.grid(row=5, column=1)
 
-                                    # secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
-                                    # secret_key_label.grid(row=6,column=0)
-                                    # secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                    # secret_key_entry.grid(row=6, column=1)
+                                    Lsecret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Lsecret_key_label.grid(row=6,column=0)
+                                    Lsecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Lsecret_key_entry.grid(row=6, column=1)
 
                                     submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
                                     submit_button.grid(row=7, column=1)
@@ -552,6 +571,8 @@ def submit():
                                     global Memail_entry
                                     global Maddress_entry
                                     global text_frame
+                                    global Msecret_key_entry
+
                                     text_frame.destroy()
                                     text_frame = Frame(text_frame_header,bg="white")
 
@@ -580,10 +601,10 @@ def submit():
                                     Maddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
                                     Maddress_entry.grid(row=5, column=1)
 
-                                    # secret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
-                                    # secret_key_label.grid(row=6,column=0)
-                                    # secret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
-                                    # secret_key_entry.grid(row=6, column=1)
+                                    Msecret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Msecret_key_label.grid(row=6,column=0)
+                                    Msecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Msecret_key_entry.grid(row=6, column=1)
 
                                     submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
                                     submit_button.grid(row=7, column=1)
