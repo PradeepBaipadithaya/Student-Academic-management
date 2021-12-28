@@ -2,6 +2,7 @@ from os import _exit
 from tkinter import *
 from tkinter.font import Font
 from PIL import ImageTk,Image
+import PIL
 import sqlite3
 from tkinter import messagebox
 from tkinter import ttk
@@ -100,9 +101,7 @@ def submit():
 
 
                         text_frame.grid(row=0, column=1)
-
-
-                                            
+                       
                     else:
 
                         if record[0][1]=="L":
@@ -211,6 +210,12 @@ def submit():
                                 ]
                             def selected(event):
                                 return
+                            # img = ImageTk.PhotoImage(Image.open(f"Photos\\{usn_no}.png"))
+                            # pic_frame = Frame(lecture_frame)
+                            # pic_label =Label(pic_frame,image=img)
+                            # pic_label.pack()
+                            # pic_frame.grid(row=0, column=0)
+
 
                             text_frame = Frame(lecture_frame)
                             username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
@@ -263,7 +268,7 @@ def submit():
                             subcode_combo.bind("<<ComboboxSelected>>", selected)
                             subcode_combo.grid(row=5, column=1, columnspan=20)
 
-                            text_frame.grid(row=0,column=0)                
+                            text_frame.grid(row=1,column=0)                
 
                             button_frame = Frame(lecture_frame)
                             fetchall_button = Button(button_frame,text="Fetch all details",width="20",height ="3",bg="blue", command=fetchall)
@@ -274,7 +279,7 @@ def submit():
 
                             take_attendance_button = Button(button_frame,text="Take attendance",width="20",height ="3",bg="blue", command=take_attendance)
                             take_attendance_button.grid(row=6,column=2,padx=15)
-                            button_frame.grid(row=1, column=0)
+                            button_frame.grid(row=2, column=0)
 
                         elif record[0][1] =="M":
                                                 
@@ -320,6 +325,9 @@ def submit():
                                                 
 
                                                 mydb.commit()
+                                                image_path ="C:\\Users\\pc\\Desktop\\Atten_all\\Photos"
+
+                                                image = imagechoosen.save(f"{image_path}\\{Susn_entry.get()}.png")
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
                                                 add_records_window.destroy()
                                                 
@@ -346,6 +354,9 @@ def submit():
                                                 my_cursor.execute(query_string,value)
 
                                                 mydb.commit()
+                                                image_path ="C:\\Users\\pc\\Desktop\\Atten_all\\Photos"
+
+                                                image = imagechoosen.save(f"{image_path}\\{Lusn_entry.get()}.png")
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
                                                 add_records_window.destroy()
                                                 
@@ -371,6 +382,9 @@ def submit():
                                                 my_cursor.execute(query_string,value)
 
                                                 mydb.commit()
+                                                image_path ="C:\\Users\\pc\\Desktop\\Atten_all\\Photos"
+
+                                                image = imagechoosen.save(f"{image_path}\\{Musn_entry.get()}.png")
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
                                                 add_records_window.destroy()
                                                 
@@ -381,7 +395,10 @@ def submit():
                                     
                                 def add_photo():
                                     global photo
+                                    global imagechoosen
                                     pic_frame.filename = filedialog.askopenfilename(initialdir=r"C:\\Users\\pc\\Desktop\\Dbms\\USN_Photos",title = "Select Photo",filetypes=(("jpg file","*.jpg"),("All files","*.*")))
+
+                                    imagechoosen =Image.open(pic_frame.filename)
                                     photo = ImageTk.PhotoImage(Image.open(pic_frame.filename))
                                     
                                     my_image_label = Label(pic_frame,image=photo).grid(row=0, column=0)
@@ -616,13 +633,223 @@ def submit():
 
                             def update_records():
                                 def submit():
-                                    return
+                                    try:
+                                        entered_usn = usn_entry.get()
+                                        querry_string = "SELECT role FROM login WHERE usn =%s"
+                                        my_cursor.execute(querry_string,(entered_usn,))
+                                        record = my_cursor.fetchall()
+                                        if record[0][0]=="L":
+                                            global Lupdate_image
+                                            
+                                            usn_frame.destroy()
+                                            def update():
+                                                if L_update_name_entry.get()=="" or L_update_name_entry.get()=="" or L_update_usn_entry.get()=="" or L_update_phone_entry.get()=="" or L_update_email_entry.get()=="" or L_update_address_entry.get()=="" :
+                                                    messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+
+                                                else:
+                                                    querry_string = "UPDATE lecture_details SET name=%s, ssid= %s, phone=%s, email=%s, address=%s WHERE ssid =%s"
+                                                    values = (L_update_name_entry.get(),L_update_usn_entry.get(),L_update_phone_entry.get(),L_update_email_entry.get(),L_update_address_entry.get(),L_update_usn_entry.get())
+
+                                                    my_cursor.execute(querry_string,values)
+
+                                                    mydb.commit()
+                                                    messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
+                                                    update_records_window.destroy()
+
+         
+                                            querry_string = "SELECT name,ssid,phone,email,address FROM lecture_details WHERE ssid =%s"
+                                            my_cursor.execute(querry_string,(entered_usn,))
+                                            record = my_cursor.fetchall()
+
+                                            update_frame = Frame(update_records_window)
+                                            Lupdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
+                                        
+                                            pic_label =Label(update_frame,image=Lupdate_image)
+                                            pic_label.grid(row=0, column=0)
+
+                                            name_label = Label(update_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            name_label.grid(row=1, column=0)
+                                            L_update_name_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            L_update_name_entry.insert(0,f"{record[0][0]}")
+                                            L_update_name_entry.grid(row=1, column=1)
+
+                                            usn_label = Label(update_frame,text="SSID", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            usn_label.grid(row=2, column=0)
+                                            L_update_usn_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            L_update_usn_entry.insert(0,f"{record[0][1]}")
+                                            L_update_usn_entry.grid(row=2, column=1)
+                                
+                                            phone_label = Label(update_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            phone_label.grid(row=3, column=0)
+                                            L_update_phone_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            L_update_phone_entry.insert(0,f"{record[0][2]}")
+                                            L_update_phone_entry.grid(row=3, column=1)
+
+                                            email_label = Label(update_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            email_label.grid(row=4, column=0)
+                                            L_update_email_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            L_update_email_entry.insert(0,f"{record[0][3]}")
+                                            L_update_email_entry.grid(row=4, column=1)
+                                    
+                                            address_label = Label(update_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            address_label.grid(row=5, column=0)
+                                            L_update_address_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            L_update_address_entry.insert(0,f"{record[0][4]}")
+                                            L_update_address_entry.grid(row=5, column=1)
+
+                                            update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
+                                            update_button.grid(row=6, column=1)
+                                            update_frame.grid(row=0,column=0)
+
+                                        elif record[0][0]=="M":
+                                            global Mupdate_image
+                                            
+                                            usn_frame.destroy()
+                                            def update():
+                                                if M_update_name_entry.get()=="" or M_update_name_entry.get()=="" or M_update_usn_entry.get()=="" or M_update_phone_entry.get()=="" or M_update_email_entry.get()=="" or M_update_address_entry.get()=="" :
+                                                    messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+
+                                                else:
+                                                    querry_string = "UPDATE admin_details SET name=%s, aid= %s, phone=%s, email=%s, address=%s WHERE aid =%s"
+                                                    values = (M_update_name_entry.get(),M_update_usn_entry.get(),M_update_phone_entry.get(),M_update_email_entry.get(),M_update_address_entry.get(),M_update_usn_entry.get())
+
+                                                    my_cursor.execute(querry_string,values)
+
+                                                    mydb.commit()
+                                                    messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
+                                                    update_records_window.destroy()
+
+         
+                                            querry_string = "SELECT name,aid,phone,email,address FROM admin_details WHERE aid =%s"
+                                            my_cursor.execute(querry_string,(entered_usn,))
+                                            record = my_cursor.fetchall()
+
+                                            update_frame = Frame(update_records_window)
+                                            Mupdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
+                                        
+                                            pic_label =Label(update_frame,image=Mupdate_image)
+                                            pic_label.grid(row=0, column=0)
+
+                                            name_label = Label(update_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            name_label.grid(row=1, column=0)
+                                            M_update_name_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            M_update_name_entry.insert(0,f"{record[0][0]}")
+                                            M_update_name_entry.grid(row=1, column=1)
+
+                                            usn_label = Label(update_frame,text="AID", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            usn_label.grid(row=2, column=0)
+                                            M_update_usn_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            M_update_usn_entry.insert(0,f"{record[0][1]}")
+                                            M_update_usn_entry.grid(row=2, column=1)
+                                
+                                            phone_label = Label(update_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            phone_label.grid(row=3, column=0)
+                                            M_update_phone_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            M_update_phone_entry.insert(0,f"{record[0][2]}")
+                                            M_update_phone_entry.grid(row=3, column=1)
+
+                                            email_label = Label(update_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            email_label.grid(row=4, column=0)
+                                            M_update_email_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            M_update_email_entry.insert(0,f"{record[0][3]}")
+                                            M_update_email_entry.grid(row=4, column=1)
+                                    
+                                            address_label = Label(update_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            address_label.grid(row=5, column=0)
+                                            M_update_address_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            M_update_address_entry.insert(0,f"{record[0][4]}")
+                                            M_update_address_entry.grid(row=5, column=1)
+
+                                            update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
+                                            update_button.grid(row=6, column=1)
+                                            update_frame.grid(row=0,column=0)
+
+                                        if record[0][0]=="S":
+                                            global Supdate_image
+                                            
+                                            usn_frame.destroy()
+                                            def update():
+                                                if S_update_name_entry.get()=="" or S_update_name_entry.get()=="" or S_update_usn_entry.get()=="" or S_update_sem_entry.get()=="" or S_update_section_entry.get()=="" or S_update_phone_entry.get()=="" or S_update_email_entry.get()=="" or S_update_address_entry.get()=="" :
+                                                    messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+
+                                                else:
+                                                    querry_string = "UPDATE student_details SET name=%s, usn= %s, sem = %s, sec=%s, phone=%s, email=%s, address=%s WHERE usn =%s"
+                                                    values = (S_update_name_entry.get(),S_update_usn_entry.get(),S_update_sem_entry.get(),S_update_section_entry.get(),S_update_phone_entry.get(),S_update_email_entry.get(),S_update_address_entry.get(),S_update_usn_entry.get())
+
+                                                    my_cursor.execute(querry_string,values)
+
+                                                    mydb.commit()
+                                                    messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
+                                                    update_records_window.destroy()
+
+         
+                                            querry_string = "SELECT name,usn,sem,sec,phone,email,address FROM student_details WHERE usn =%s"
+                                            my_cursor.execute(querry_string,(entered_usn,))
+                                            record = my_cursor.fetchall()
+
+                                            update_frame = Frame(update_records_window)
+                                            Supdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
+                                        
+                                            pic_label =Label(update_frame,image=Supdate_image)
+                                            pic_label.grid(row=0, column=0)
+
+                                            name_label = Label(update_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            name_label.grid(row=1, column=0)
+                                            S_update_name_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            S_update_name_entry.insert(0,f"{record[0][0]}")
+                                            S_update_name_entry.grid(row=1, column=1)
+
+                                            usn_label = Label(update_frame,text="SSID", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            usn_label.grid(row=2, column=0)
+                                            S_update_usn_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            S_update_usn_entry.insert(0,f"{record[0][1]}")
+                                            S_update_usn_entry.grid(row=2, column=1)
+
+                                            sem_label = Label(update_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            sem_label.grid(row=3, column=0)
+                                            S_update_sem_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            S_update_sem_entry.insert(0,f"{record[0][2]}")
+                                            S_update_sem_entry.grid(row=3, column=1)
+
+                                            section_label = Label(update_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
+                                            section_label.grid(row=4, column=0)
+                                            S_update_section_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            S_update_section_entry.insert(0,f"{record[0][3]}")
+                                            S_update_section_entry.grid(row=4, column=1)
+                                
+                                            phone_label = Label(update_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            phone_label.grid(row=5, column=0)
+                                            S_update_phone_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            S_update_phone_entry.insert(0,f"{record[0][4]}")
+                                            S_update_phone_entry.grid(row=5, column=1)
+
+                                            email_label = Label(update_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            email_label.grid(row=6, column=0)
+                                            S_update_email_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            S_update_email_entry.insert(0,f"{record[0][5]}")
+                                            S_update_email_entry.grid(row=6, column=1)
+                                    
+                                            address_label = Label(update_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
+                                            address_label.grid(row=7, column=0)
+                                            S_update_address_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                            S_update_address_entry.insert(0,f"{record[0][6]}")
+                                            S_update_address_entry.grid(row=7, column=1)
+
+                                            update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
+                                            update_button.grid(row=8, column=1)
+                                            update_frame.grid(row=0,column=0)
+                                    except:
+                                        messagebox.showerror("Invalid","Entered USN or SSID not exists!")
+
+
+
                                 
 
                                 update_records_window = Toplevel()
                                 update_records_window.title("Update records")
-                                update_records_window.geometry("700x600")
+                                update_records_window.geometry("600x800")
                                 update_records_window.configure(background='#EAF8F8')
+                                
 
                                 usn_frame = Frame(update_records_window)
                                 usn_label = Label(usn_frame,text="Enter USN or SSID", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
@@ -688,20 +915,30 @@ def submit():
                             
 
                             login_frame.destroy()
+                            querry_string = "SELECT name,aid FROM admin_details WHERE aid =%s"
+                            my_cursor.execute(querry_string,(usn_no,))
+                            record = my_cursor.fetchall()
+
                             maintainer_frame = Frame(root, height="800", width="1000")
                             maintainer_frame.pack(side=TOP, expand=YES)
+
+                            img = ImageTk.PhotoImage(Image.open(f"Photos\\{usn_no}.png"))
+                            pic_frame = Frame(maintainer_frame)
+                            pic_label =Label(pic_frame,image=img)
+                            pic_label.pack()
+                            pic_frame.grid(row=0, column=0)
 
                             text_frame = Frame(maintainer_frame)
                             M_username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
                             M_username_label.grid(row=0, column=0)
 
-                            M_username_name_label = Label(text_frame,text="Pradeep", font=('Lobster 30 bold'), pady=30)
+                            M_username_name_label = Label(text_frame,text=f"{record[0][0]}", font=('Lobster 30 bold'), pady=30)
                             M_username_name_label.grid(row=0, column=1)
 
-                            maintainer_label = Label(text_frame,text="Maintainer id :", font=('Lobster 30 bold'), pady=30)
+                            maintainer_label = Label(text_frame,text="Admin id :", font=('Lobster 30 bold'), pady=30)
                             maintainer_label.grid(row=1, column=0)
 
-                            maintainer_id_label = Label(text_frame, text="sfdhj", font=('Lobster 30 bold'),pady=30)
+                            maintainer_id_label = Label(text_frame, text=f"{record[0][1]}", font=('Lobster 30 bold'),pady=30)
                             maintainer_id_label.grid(row=1, column=1)
 
                             funtionality_label = Label(text_frame,text="Funtionality", font=('Lobster 40 bold'),pady=30)
