@@ -638,25 +638,37 @@ def submit():
                                         querry_string = "SELECT role FROM login WHERE usn =%s"
                                         my_cursor.execute(querry_string,(entered_usn,))
                                         record = my_cursor.fetchall()
+
                                         if record[0][0]=="L":
                                             global Lupdate_image
                                             
                                             usn_frame.destroy()
                                             def update():
-                                                if L_update_name_entry.get()=="" or L_update_name_entry.get()=="" or L_update_usn_entry.get()=="" or L_update_phone_entry.get()=="" or L_update_email_entry.get()=="" or L_update_address_entry.get()=="" :
-                                                    messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                
+                                                value=[]
+                                                i=0
+                                                for entry_detail in L_entry_details:
+                                                    i+=1
+                                                    if entry_detail.get()=="":
+                                                         messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                    else:
+                                                        if i==2:
+                                                            ssid =entry_detail.get()
+                                                            value.append(entry_detail.get())
+                                                        # print(entry_detail.get())
+                                                        else:
+                                                            value.append(entry_detail.get())
+                                                
+                                                value.append(ssid)
+                                                # print(value)
+                                                querry_string = "UPDATE lecture_details SET name=%s, ssid= %s, phone=%s, email=%s, address=%s WHERE ssid =%s"
 
-                                                else:
-                                                    querry_string = "UPDATE lecture_details SET name=%s, ssid= %s, phone=%s, email=%s, address=%s WHERE ssid =%s"
-                                                    values = (L_update_name_entry.get(),L_update_usn_entry.get(),L_update_phone_entry.get(),L_update_email_entry.get(),L_update_address_entry.get(),L_update_usn_entry.get())
+                                                my_cursor.execute(querry_string,tuple(value))
 
-                                                    my_cursor.execute(querry_string,values)
+                                                mydb.commit()
+                                                messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
+                                                update_records_window.destroy()
 
-                                                    mydb.commit()
-                                                    messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
-                                                    update_records_window.destroy()
-
-         
                                             querry_string = "SELECT name,ssid,phone,email,address FROM lecture_details WHERE ssid =%s"
                                             my_cursor.execute(querry_string,(entered_usn,))
                                             record = my_cursor.fetchall()
@@ -667,36 +679,22 @@ def submit():
                                             pic_label =Label(update_frame,image=Lupdate_image)
                                             pic_label.grid(row=0, column=0)
 
-                                            name_label = Label(update_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            name_label.grid(row=1, column=0)
-                                            L_update_name_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            L_update_name_entry.insert(0,f"{record[0][0]}")
-                                            L_update_name_entry.grid(row=1, column=1)
+                                            lecture_details_labels =["Name","SSID","Phone","Email","Address"]
 
-                                            usn_label = Label(update_frame,text="SSID", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            usn_label.grid(row=2, column=0)
-                                            L_update_usn_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            L_update_usn_entry.insert(0,f"{record[0][1]}")
-                                            L_update_usn_entry.grid(row=2, column=1)
-                                
-                                            phone_label = Label(update_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            phone_label.grid(row=3, column=0)
-                                            L_update_phone_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            L_update_phone_entry.insert(0,f"{record[0][2]}")
-                                            L_update_phone_entry.grid(row=3, column=1)
+                                            i=1
+                                            for label_details in lecture_details_labels:
+                                                my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
+                                                my_label.grid(row=i, column=0)
+                                                i+=1
 
-                                            email_label = Label(update_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            email_label.grid(row=4, column=0)
-                                            L_update_email_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            L_update_email_entry.insert(0,f"{record[0][3]}")
-                                            L_update_email_entry.grid(row=4, column=1)
-                                    
-                                            address_label = Label(update_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            address_label.grid(row=5, column=0)
-                                            L_update_address_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            L_update_address_entry.insert(0,f"{record[0][4]}")
-                                            L_update_address_entry.grid(row=5, column=1)
+                                            L_entry_details =[]
+                                            for iterator in range(1,6):
+                                                my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                                my_entry.insert(0,f"{record[0][iterator-1]}")
+                                                my_entry.grid(row=iterator, column=1)
+                                                L_entry_details.append(my_entry)
 
+                                           
                                             update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
                                             update_button.grid(row=6, column=1)
                                             update_frame.grid(row=0,column=0)
@@ -706,18 +704,29 @@ def submit():
                                             
                                             usn_frame.destroy()
                                             def update():
-                                                if M_update_name_entry.get()=="" or M_update_name_entry.get()=="" or M_update_usn_entry.get()=="" or M_update_phone_entry.get()=="" or M_update_email_entry.get()=="" or M_update_address_entry.get()=="" :
-                                                    messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
-
-                                                else:
-                                                    querry_string = "UPDATE admin_details SET name=%s, aid= %s, phone=%s, email=%s, address=%s WHERE aid =%s"
-                                                    values = (M_update_name_entry.get(),M_update_usn_entry.get(),M_update_phone_entry.get(),M_update_email_entry.get(),M_update_address_entry.get(),M_update_usn_entry.get())
-
-                                                    my_cursor.execute(querry_string,values)
-
-                                                    mydb.commit()
-                                                    messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
-                                                    update_records_window.destroy()
+                                                value=[]
+                                                i=0
+                                                for entry_detail in A_entry_details:
+                                                    i+=1
+                                                    if entry_detail.get()=="":
+                                                         messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                    else:
+                                                        if i==2:
+                                                            aid =entry_detail.get()
+                                                            value.append(entry_detail.get())
+                                                        # print(entry_detail.get())
+                                                        else:
+                                                            value.append(entry_detail.get())
+                                                
+                                                value.append(aid)
+                                                # print(value)
+                                               
+                                                querry_string = "UPDATE admin_details SET name=%s, aid= %s, phone=%s, email=%s, address=%s WHERE aid =%s"
+                                                my_cursor.execute(querry_string,tuple(value))
+                                                                                         
+                                                mydb.commit()
+                                                messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
+                                                update_records_window.destroy()
 
          
                                             querry_string = "SELECT name,aid,phone,email,address FROM admin_details WHERE aid =%s"
@@ -730,36 +739,22 @@ def submit():
                                             pic_label =Label(update_frame,image=Mupdate_image)
                                             pic_label.grid(row=0, column=0)
 
-                                            name_label = Label(update_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            name_label.grid(row=1, column=0)
-                                            M_update_name_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            M_update_name_entry.insert(0,f"{record[0][0]}")
-                                            M_update_name_entry.grid(row=1, column=1)
+                                            admin_details_labels =["Name","AID","Phone","Email","Address"]
 
-                                            usn_label = Label(update_frame,text="AID", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            usn_label.grid(row=2, column=0)
-                                            M_update_usn_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            M_update_usn_entry.insert(0,f"{record[0][1]}")
-                                            M_update_usn_entry.grid(row=2, column=1)
-                                
-                                            phone_label = Label(update_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            phone_label.grid(row=3, column=0)
-                                            M_update_phone_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            M_update_phone_entry.insert(0,f"{record[0][2]}")
-                                            M_update_phone_entry.grid(row=3, column=1)
+                                            i=1
+                                            for label_details in admin_details_labels:
+                                                my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
+                                                my_label.grid(row=i, column=0)
+                                                i+=1
 
-                                            email_label = Label(update_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            email_label.grid(row=4, column=0)
-                                            M_update_email_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            M_update_email_entry.insert(0,f"{record[0][3]}")
-                                            M_update_email_entry.grid(row=4, column=1)
-                                    
-                                            address_label = Label(update_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            address_label.grid(row=5, column=0)
-                                            M_update_address_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            M_update_address_entry.insert(0,f"{record[0][4]}")
-                                            M_update_address_entry.grid(row=5, column=1)
+                                            A_entry_details =[]
+                                            for iterator in range(1,6):
+                                                my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                                my_entry.insert(0,f"{record[0][iterator-1]}")
+                                                my_entry.grid(row=iterator, column=1)
+                                                A_entry_details.append(my_entry)
 
+                                            
                                             update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
                                             update_button.grid(row=6, column=1)
                                             update_frame.grid(row=0,column=0)
@@ -769,18 +764,30 @@ def submit():
                                             
                                             usn_frame.destroy()
                                             def update():
-                                                if S_update_name_entry.get()=="" or S_update_name_entry.get()=="" or S_update_usn_entry.get()=="" or S_update_sem_entry.get()=="" or S_update_section_entry.get()=="" or S_update_phone_entry.get()=="" or S_update_email_entry.get()=="" or S_update_address_entry.get()=="" :
-                                                    messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                value=[]
+                                                i=0
+                                                for entry_detail in S_entry_details:
+                                                    i+=1
+                                                    if entry_detail.get()=="":
+                                                         messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                    else:
+                                                        if i==2:
+                                                            usn =entry_detail.get()
+                                                            value.append(entry_detail.get())
+                                                        # print(entry_detail.get())
+                                                        else:
+                                                            value.append(entry_detail.get())
+                                                
+                                                value.append(usn)
+                                                # print(value)
+                                               
+                                                querry_string = "UPDATE student_details SET name=%s, usn= %s, sem = %s, sec=%s, phone=%s, email=%s, address=%s WHERE usn =%s"
+                                                    
+                                                my_cursor.execute(querry_string,tuple(value))
 
-                                                else:
-                                                    querry_string = "UPDATE student_details SET name=%s, usn= %s, sem = %s, sec=%s, phone=%s, email=%s, address=%s WHERE usn =%s"
-                                                    values = (S_update_name_entry.get(),S_update_usn_entry.get(),S_update_sem_entry.get(),S_update_section_entry.get(),S_update_phone_entry.get(),S_update_email_entry.get(),S_update_address_entry.get(),S_update_usn_entry.get())
-
-                                                    my_cursor.execute(querry_string,values)
-
-                                                    mydb.commit()
-                                                    messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
-                                                    update_records_window.destroy()
+                                                mydb.commit()
+                                                messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
+                                                update_records_window.destroy()
 
          
                                             querry_string = "SELECT name,usn,sem,sec,phone,email,address FROM student_details WHERE usn =%s"
@@ -792,54 +799,31 @@ def submit():
                                         
                                             pic_label =Label(update_frame,image=Supdate_image)
                                             pic_label.grid(row=0, column=0)
+                                            
+                                            student_details_labels =["Name","USN","Sem","Section","Phone","Email","Address"]
 
-                                            name_label = Label(update_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            name_label.grid(row=1, column=0)
-                                            S_update_name_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            S_update_name_entry.insert(0,f"{record[0][0]}")
-                                            S_update_name_entry.grid(row=1, column=1)
+                                            i=1
+                                            for label_details in student_details_labels:
+                                                my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
+                                                my_label.grid(row=i, column=0)
+                                                i+=1
 
-                                            usn_label = Label(update_frame,text="SSID", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            usn_label.grid(row=2, column=0)
-                                            S_update_usn_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            S_update_usn_entry.insert(0,f"{record[0][1]}")
-                                            S_update_usn_entry.grid(row=2, column=1)
+                                            S_entry_details =[]
 
-                                            sem_label = Label(update_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            sem_label.grid(row=3, column=0)
-                                            S_update_sem_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            S_update_sem_entry.insert(0,f"{record[0][2]}")
-                                            S_update_sem_entry.grid(row=3, column=1)
+                                            for iterator in range(1,8):
+                                                my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
+                                                my_entry.insert(0,f"{record[0][iterator-1]}")
+                                                my_entry.grid(row=iterator, column=1)
+                                                S_entry_details.append(my_entry)
 
-                                            section_label = Label(update_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
-                                            section_label.grid(row=4, column=0)
-                                            S_update_section_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            S_update_section_entry.insert(0,f"{record[0][3]}")
-                                            S_update_section_entry.grid(row=4, column=1)
-                                
-                                            phone_label = Label(update_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            phone_label.grid(row=5, column=0)
-                                            S_update_phone_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            S_update_phone_entry.insert(0,f"{record[0][4]}")
-                                            S_update_phone_entry.grid(row=5, column=1)
 
-                                            email_label = Label(update_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            email_label.grid(row=6, column=0)
-                                            S_update_email_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            S_update_email_entry.insert(0,f"{record[0][5]}")
-                                            S_update_email_entry.grid(row=6, column=1)
-                                    
-                                            address_label = Label(update_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
-                                            address_label.grid(row=7, column=0)
-                                            S_update_address_entry =Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                            S_update_address_entry.insert(0,f"{record[0][6]}")
-                                            S_update_address_entry.grid(row=7, column=1)
-
+                                            
                                             update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
                                             update_button.grid(row=8, column=1)
                                             update_frame.grid(row=0,column=0)
                                     except:
                                         messagebox.showerror("Invalid","Entered USN or SSID not exists!")
+                                        update_records_window.destroy()
 
 
 

@@ -1,1 +1,1 @@
-      
+print(entry_detail.get())
