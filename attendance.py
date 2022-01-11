@@ -12,7 +12,7 @@ import mysql.connector
 root =Tk()
 root.title("Login Page")
 root.configure(background='#EAF8F8')
-
+Font_tuple = (("Comic Sans MS", 30, "bold"),("Island Moments",20,""))
 mydb = mysql.connector.connect(buffered=True,#Used buffered because i am using fetchall and fetchall reqires its buffered  to be cleaned each time it iterates
     host = "localhost",
     user = "root",
@@ -47,7 +47,7 @@ def submit():
                                 messagebox.showerror("Invalid","All fields are mandatory")
 
                             elif record[0][2]!=security_key_entry.get():
-                                messagebox.showerror("Invalid","Security key has not reached")
+                                messagebox.showerror("Invalid","Security keyis not correct")
 
                             elif new_passwd_entry.get()!=rewrite_passwd_entry.get():
                                 messagebox.showerror("Invalid","Password entered is not correct")
@@ -107,16 +107,120 @@ def submit():
                         if record[0][1]=="L":
 
 
-                            def fetchall():
-                                fetchall_window = Toplevel()
-                                fetchall_window.title("Score")
-                                fetchall_window.geometry("800x600")
-                                fetchall_frame = Frame(fetchall_window)
-                                name_labels = Label(fetchall_frame,text="names of students",font=('Lobster 30 bold'),pady=30)
-                                name_labels.grid(row=0, column=0)
-                                fetchall_frame.pack()
+                            def add_student():                              
+                                
+                                def add_stud():
+                                    # add_student_window.destroy()
+                                    add_student_window = Toplevel()
+                                    add_student_window.title("Score")
+                                    add_student_window.geometry("800x600")
+                                    add_student_frame1 = Frame(add_student_window)
 
-                            def fetch_by_one():
+                                    my_canvas = Canvas(add_student_frame1)
+                                    my_canvas.pack(side=LEFT,fill=BOTH, expand=1)
+
+                                    my_scrollbar = ttk.Scrollbar(add_student_frame1,orient=VERTICAL,command=my_canvas.yview)
+                                    my_scrollbar.pack(side=RIGHT,fill=Y)
+
+                                    my_canvas.configure(yscrollcommand=my_scrollbar.set)
+                                    my_canvas.bind('<Configure>',lambda e:my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+                                    second_frame = Frame(my_canvas)
+                                    my_canvas.create_window((0,0),window=second_frame,anchor="nw")
+
+                                    selected = table_combo.get()
+                                    num = int(num_combo.get())
+                                    # print(selected)
+                                    # print(num)
+
+                                    
+                                    # add_table_labels = Label(add_student_frame1,text="Selected attendence table :",font=('Lobster 30 bold'),pady=30)
+                                    # add_table_labels.grid(row=0, column=0)
+
+                                    # table_selected_labels = Label(add_student_frame1,text=selected,font=('Lobster 30 bold'),pady=30)
+                                    # table_selected_labels.grid(row=0, column=1)
+
+                                    # no_student_labels = Label(add_student_frame1,text="Select number of student",font=('Lobster 30 bold'),pady=30)
+                                    # no_student_labels.grid(row=1, column=0)
+
+                                    # no_student_labels = Label(add_student_frame1,text=num,font=('Lobster 30 bold'),pady=30)
+                                    # no_student_labels.grid(row=1, column=1)
+
+                                    # value_label =Label(add_student_frame1,text="Enter Student usn",font=('Lobster 30 bold'),pady=30)
+                                    # value_label.grid(row=2, column=0)
+
+                                    i=0
+                                    for i in range(0,num):
+                                        name_labels = Label(second_frame,text=f"Student {i+1}) ",font=('Lobster 30 bold'))
+                                        name_labels.grid(row=i+3,column=0)
+
+                                    entry_details=[]
+                                    for iterator in range(0,num):
+                                        my_entry = Entry(second_frame, width="22",font=('Lobster 15 bold'))
+                                        
+                                        my_entry.grid(row=iterator+3, column=1)
+                                        entry_details.append(my_entry)
+
+                                    
+                                    
+
+
+
+
+                                    add_student_frame1.grid(row=0, column=0)
+                        
+
+                                    
+                                    
+
+                                    
+
+                               
+                                add_student_window = Toplevel()
+                                add_student_window.title("Score")
+                                add_student_window.geometry("800x600")
+                                add_student_frame = Frame(add_student_window)
+                                global num_student_entry
+                                
+
+                                querry_string="SELECT attendence_table_name FROM lecture_record WHERE ssid = %s"
+                                my_cursor.execute(querry_string,(usn_no,))
+                                records = my_cursor.fetchall()
+                                data =[]
+                                num = list(range(1,101))
+                                
+                                for record in records:
+                                    data = data + list(record)
+
+                                table_labels = Label(add_student_frame,text="Select attendence table",font=('Lobster 30 bold'),pady=30)
+                                table_labels.grid(row=0, column=0)
+
+                                # print(data)
+                                table_cliked = StringVar()
+                                # table_cliked.set(data[0])
+
+                                table_combo = ttk.Combobox(add_student_frame,value =data,font=('Lobster 14 bold'),width="20")
+                                table_combo.current(0)
+                                table_combo.grid(row=0, column=1, columnspan=20)
+
+                                num_student_labels = Label(add_student_frame,text="Select number of student",font=('Lobster 30 bold'),pady=30)
+                                num_student_labels.grid(row=1, column=0)
+
+                                num_cliked = StringVar()
+                                # num_cliked.set(num[1])
+
+                                num_combo = ttk.Combobox(add_student_frame,value =num,font=('Lobster 14 bold'),width="20")
+                                num_combo.current(0)
+                                num_combo.grid(row=1, column=1, columnspan=20)
+
+                                
+
+                                submit_button = Button(add_student_frame,text="submit", pady=10, command=add_stud)
+                                submit_button.grid(row=4,column=1)
+
+
+                                add_student_frame.pack()
+
+                            def attn_records():
                                 attendence_window = Toplevel()
                                 attendence_window.title("attendence")
                                 attendence_window.geometry("800x600")
@@ -170,7 +274,7 @@ def submit():
                                 lecture_frame.pack()
                                 attendence_window.state("zoomed")
 
-                            def take_attendance():
+                            def take_attn():
                                 x,y = 0,0
                                 take_attendence_window = Toplevel()
                                 take_attendence_window.title("Take Attendence")
@@ -183,11 +287,7 @@ def submit():
                                 student_name_entry.grid(row=x, column=y+1)
 
 
-                            login_frame.destroy()
-                            lecture_frame = Frame(root, height="800", width="1000")
-                            lecture_frame.pack(side=TOP, expand=YES)
-                            output_text ="Pradeep"
-                            output_id = "pra123"
+                            
 
                             subcode_no =[
                                 "18CS54",
@@ -210,76 +310,52 @@ def submit():
                                 ]
                             def selected(event):
                                 return
-                            # img = ImageTk.PhotoImage(Image.open(f"Photos\\{usn_no}.png"))
-                            # pic_frame = Frame(lecture_frame)
-                            # pic_label =Label(pic_frame,image=img)
-                            # pic_label.pack()
-                            # pic_frame.grid(row=0, column=0)
+                            
+                            login_frame.destroy()
+                            querry_string = "SELECT name,ssid FROM lecture_details WHERE ssid =%s"
+                            my_cursor.execute(querry_string,(usn_no,))
+                            record = my_cursor.fetchall()
 
+                            lecture_frame = Frame(root, height="800", width="1000")
+                            lecture_frame.pack(side=TOP, expand=YES)
+
+                            img = ImageTk.PhotoImage(Image.open(f"Photos\\{usn_no}.png"))
+                            pic_frame = Frame(lecture_frame)
+                            pic_label =Label(pic_frame,image=img)
+                            pic_label.pack()
+                            pic_frame.grid(row=0, column=0)
 
                             text_frame = Frame(lecture_frame)
-                            username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
-                            username_label.grid(row=0, column=0)
+                            L_username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
+                            L_username_label.grid(row=0, column=0)
 
-                            username_name_label = Label(text_frame,text=output_text, font=('Lobster 30 bold'), pady=30)
-                            username_name_label.grid(row=0, column=1)
+                            L_username_name_label = Label(text_frame,text=f"{record[0][0]}", font=('Lobster 30 bold'), pady=30)
+                            L_username_name_label.grid(row=0, column=1)
 
-                            lecture_label = Label(text_frame,text="Employee ID:", font=('Lobster 30 bold'), pady=30)
+                            lecture_label = Label(text_frame,text="Lecture id :", font=('Lobster 30 bold'), pady=30)
                             lecture_label.grid(row=1, column=0)
 
-                            lecture_id_label = Label(text_frame, text=output_id, font=('Lobster 30 bold'),pady=30)
+                            lecture_id_label = Label(text_frame, text=f"{record[0][1]}", font=('Lobster 30 bold'),pady=30)
                             lecture_id_label.grid(row=1, column=1)
 
                             funtionality_label = Label(text_frame,text="Funtionality", font=('Lobster 40 bold'),pady=30)
                             funtionality_label.grid(row=2, column=0)
 
-                            class_label = Label(text_frame,text="Enter sem", font=('Lobster 30 bold'),pady=30)
-                            class_label.grid(row=3, column=0)
-
-
-                            class_cliked = StringVar()
-                            class_cliked.set(class_no[0])
-
-                            class_combo = ttk.Combobox(text_frame,value =class_no,font=('Lobster 14 bold'),width="20")
-                            class_combo.current(0)
-                            class_combo.bind("<<ComboboxSelected>>", selected)
-                            class_combo.grid(row=3, column=1, columnspan=20)
-
-                            section_label = Label(text_frame,text="Enter section :", font=('Lobster 30 bold'),pady=30)
-                            section_label.grid(row=4, column=0)
-
-                            section_clicked = StringVar()
-                            section_clicked.set(section[0])
-
-                            section_combo = ttk.Combobox(text_frame,value =section,font=('Lobster 14 bold'),width="20")
-                            section_combo.current(0)
-                            section_combo.bind("<<ComboboxSelected>>", selected)
-                            section_combo.grid(row=4, column=1)
-
-                            subcode_label = Label(text_frame,text="Enter subject code", font=('Lobster 30 bold'),pady=30)
-                            subcode_label.grid(row=5, column=0)
-
-
-                            subcode_cliked = StringVar()
-                            subcode_cliked.set(class_no[0])
-
-                            subcode_combo = ttk.Combobox(text_frame,value =subcode_no,font=('Lobster 14 bold'),width="20")
-                            subcode_combo.current(0)
-                            subcode_combo.bind("<<ComboboxSelected>>", selected)
-                            subcode_combo.grid(row=5, column=1, columnspan=20)
-
-                            text_frame.grid(row=1,column=0)                
+                            text_frame.grid(row=1, column=0)
 
                             button_frame = Frame(lecture_frame)
-                            fetchall_button = Button(button_frame,text="Fetch all details",width="20",height ="3",bg="blue", command=fetchall)
-                            fetchall_button.grid(row=6,column=0,padx=15)
 
-                            fetch_by_one_button = Button(button_frame,text="Fetch by one",width="20",height ="3",bg="blue", command=fetch_by_one)
-                            fetch_by_one_button.grid(row=6,column=1,padx=15)
+                            add_student_button = Button(button_frame,text="Add student",width="20",height ="3",bg="blue", command=add_student)
+                            add_student_button.grid(row=3,column=0,pady=30,padx=15)
 
-                            take_attendance_button = Button(button_frame,text="Take attendance",width="20",height ="3",bg="blue", command=take_attendance)
-                            take_attendance_button.grid(row=6,column=2,padx=15)
+                            attn_records_button = Button(button_frame,text="Attendence Record",width="20",height ="3",bg="blue", command=attn_records)
+                            attn_records_button.grid(row=3,column=1,pady=30,padx=15)
+
+                            take_attn_button = Button(button_frame,text="Take Attendence",width="20",height ="3",bg="blue", command=take_attn)
+                            take_attn_button.grid(row=3,column=2,pady=30,padx=15)
+
                             button_frame.grid(row=2, column=0)
+                           
 
                         elif record[0][1] =="M":
                                                 
@@ -354,7 +430,7 @@ def submit():
                                                 my_cursor.execute(query_string,value)
 
                                                 mydb.commit()
-                                                image_path ="C:\\Users\\pc\\Desktop\\Atten_all\\Photos"
+                                                image_path ="C:\\Users\\pc\\Desktop\\Student-Academic-management\\Photos"
 
                                                 image = imagechoosen.save(f"{image_path}\\{Lusn_entry.get()}.png")
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
@@ -849,51 +925,90 @@ def submit():
                                 
                             def add_subjects():
                                 def submit():
-                                    return
+                                    if ssid_entry.get()=="" or sem_entry.get()=="" or section_entry.get()=="" or subcode_entry.get()=="" :
+                                        messagebox.showwarning("Invalid","All fields are mandatory",parent =add_subjects_window) 
+                                    
+                                    else:
+                                        try:
+                                            ssid = ssid_entry.get()
+                                            querry_string ="SELECT role FROM login WHERE usn = %s"
+                                            my_cursor.execute(querry_string,(ssid,))#Variables should be given with tuple
+                                            
+                                            record = my_cursor.fetchall()
+                                            
+                                            try:
+                                                if record[0][0]!="L":
+                                                    messagebox.showwarning("Invalid","Given SSID is not found to be of lecture",parent =add_subjects_window)
+                                                else:
+                                                    table_value = str(subcode_entry.get())+"_"+str(sem_entry.get())+"_"+str(section_entry.get())
+                                                    query_string ="INSERT INTO lecture_record values(%s,%s,%s,%s,%s)"
+                                                    value = (ssid_entry.get(),subcode_entry.get(),sem_entry.get(),section_entry.get(),table_value)
+                                                    my_cursor.execute(query_string,value)
+
+                                                    my_cursor.execute(f"""CREATE TABLE {table_value} (
+                                                        Date date,
+                                                        Time time
+                                                    )
+                                                    """)
+
+                                                    mydb.commit()
+                                                    messagebox.showinfo("Added successfully","Record has been added to database",parent =add_subjects_window)
+                                                    add_subjects_window.destroy()
+                                            except:
+                                                messagebox.showerror("Invalid","Record is already present in database",parent =add_subjects_window)
+                                                
+                                        except:
+                                            messagebox.showwarning("Invalid","Given SSID is not found ",parent =add_subjects_window)
+
+
 
                                 add_subjects_window = Toplevel()
                                 add_subjects_window.title("Update records")
                                 add_subjects_window.geometry("700x600")
                                 add_subjects_window.configure(background='#EAF8F8')
 
-                                usn_frame = Frame(add_subjects_window,width="600", height="500")
-                                usn_frame.pack(side=RIGHT,expand=YES)
-                                usn_label = Label(usn_frame,text="Enter USN or SSID", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
-                                usn_label.grid(row=0, column=0)
-                                usn_entry = Entry(usn_frame, width="17",font=('Lobster 20 bold'))
-                                usn_entry.grid(row=0, column=1,padx=10)
+                                ssid_frame = Frame(add_subjects_window,width="600", height="500")
+                                ssid_frame.pack(side=RIGHT,expand=YES)
+                                ssid_label = Label(ssid_frame,text="Enter USN or SSID", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
+                                ssid_label.grid(row=0, column=0)
+                                ssid_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
+                                ssid_entry.grid(row=0, column=1,padx=10)
 
-                                sem_label = Label(usn_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
+                                sem_label = Label(ssid_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
                                 sem_label.grid(row=1, column=0)
 
-                                def selected(self):
-                                    return
-                                sem_cliked = StringVar()
-                                sem_cliked.set(sem_no[0])
+                                sem_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
+                                sem_entry.grid(row=1, column=1,padx=10)
 
-                                sem_combo = ttk.Combobox(usn_frame,value =sem_no,font=('Lobster 14 bold'),width="20")
-                                sem_combo.current(0)
-                                sem_combo.bind("<<ComboboxSelected>>", selected)
-                                sem_combo.grid(row=1, column=1, columnspan=20)
+                                # def selected(self):
+                                #     return
+                                # sem_cliked = StringVar()
+                                # sem_cliked.set(sem_no[0])
 
-                                section_label = Label(usn_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
+                                # sem_combo = ttk.Combobox(usn_frame,value =sem_no,font=('Lobster 14 bold'),width="20")
+                                # sem_combo.current(0)
+                                # sem_combo.bind("<<ComboboxSelected>>", selected)
+                                # sem_combo.grid(row=1, column=1, columnspan=20)
+
+                                section_label = Label(ssid_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
                                 section_label.grid(row=2, column=0)
+                                section_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
+                                section_entry.grid(row=2, column=1,padx=10)
+                                # sec_clicked = StringVar()
+                                # sec_clicked.set(section[0])
 
-                                sec_clicked = StringVar()
-                                sec_clicked.set(section[0])
+                                # sec_combo = ttk.Combobox(usn_frame,value =section,font=('Lobster 14 bold'),width="20")
+                                # sec_combo.current(0)
+                                # sec_combo.bind("<<ComboboxSelected>>", selected)
+                                # sec_combo.grid(row=2, column=1) 
 
-                                sec_combo = ttk.Combobox(usn_frame,value =section,font=('Lobster 14 bold'),width="20")
-                                sec_combo.current(0)
-                                sec_combo.bind("<<ComboboxSelected>>", selected)
-                                sec_combo.grid(row=2, column=1) 
-
-                                subcode_label = Label(usn_frame,text="Subcode", font=('Lobster 15 bold'),pady=10,bg='white')
+                                subcode_label = Label(ssid_frame,text="Subcode", font=('Lobster 15 bold'),pady=10,bg='white')
                                 subcode_label.grid(row=3, column=0) 
 
-                                subcode_entry = Entry(usn_frame, width="17",font=('Lobster 20 bold'))
+                                subcode_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
                                 subcode_entry.grid(row=3, column=1) 
 
-                                submit_button =Button(usn_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
+                                submit_button =Button(ssid_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
                                 submit_button.grid(row=4, column=1)
 
                             
@@ -1019,22 +1134,23 @@ def show_login_frame():
 
 
     text_frame = Frame(login_frame, bg="white")
-    login_label = Label(text_frame, text="Log In", font=('Lobster 30 bold'), bg="white", fg="blue",pady=30, anchor=NW)
+    login_label = Label(text_frame, text="Log In", font=Font_tuple[0], bg="white", fg="#1dbcdd",pady=30, anchor=NW)
     login_label.grid(row=0, column=0)
-    username_label =Label(text_frame,text="Username :",font=("Ubuntu 20"), bg="white",pady=15)
+    username_label =Label(text_frame,text="Username :",font=("@Microsoft 25 "), bg="white",pady=15)
     username_label.grid(row=1, column=0)
+    
 
-    password_label =Label(text_frame,text="Password :",font=("Ubuntu 20"), bg="white", pady=15)
+    password_label =Label(text_frame,text="Password :",font=("@Microsoft 25 "), bg="white", pady=15)
     password_label.grid(row=3, column=0)
 
-    username_entry = Entry(text_frame, width=20, font=("Ubuntu",20))
+    username_entry = Entry(text_frame, width=17, font=("@Microsoft 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
     username_entry.grid(row=1, column=1,padx=10)
 
-    password_entry = Entry(text_frame,show="*", width=20,font=("Ubuntu",20))
+    password_entry = Entry(text_frame,show="*", width=17,font=("@Microsoft 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
     password_entry.grid(row=3, column=1,padx=10)
 
-    submit_button = Button(text_frame,text="Submit", bg="blue", fg="white",font=("Ubuntu 15"),command=submit)
-    submit_button.grid(row=5, column=1,padx=10)
+    submit_button = Button(text_frame,text="Submit",font=("@Microsoft 15 bold "), bg="#d1ffff",fg ="black",highlightthickness=2, highlightcolor = 'red', cursor="hand2",command=submit)
+    submit_button.grid(row=5, column=1,padx=10,pady=25,ipadx=30,ipady=5)
 
         # sign_up_button = Button(text_frame,text="Sign up",bg="blue", fg="white",font=("Ubuntu 15"),command=sign_up)
         # sign_up_button.grid(row=5, column=0,padx=10)
