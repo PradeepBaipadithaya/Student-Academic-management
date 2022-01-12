@@ -8,6 +8,9 @@ from tkinter import messagebox
 from tkinter import ttk
 from tkinter import filedialog
 import mysql.connector
+from tkcalendar import Calendar
+from datetime import date
+import time
 
 root =Tk()
 root.title("Login Page")
@@ -110,16 +113,44 @@ def submit():
                             def add_student():                              
                                 
                                 def add_stud():
+                                    def add_student():
+                                        value =[]
+                                        for entry_detail in entry_details:
+                                            # print(items.get())
+                                            
+                                            if entry_detail.get()=="":
+                                                messagebox.showwarning("Invalid","All fields are mandatory",parent =add_student_window)
+
+                                            else:
+                                                value.append(entry_detail.get())
+                                        
+                                        for usn in value:
+                                            # querry_string = "ALTER TABLE "+f"{selected}"+" ADD " +f"{usn} "+"VARCHAR(100)"
+                                            
+                                            my_cursor.execute(f"ALTER TABLE {selected} ADD {usn} VARCHAR(100)")
+                                            
+                                            mydb.commit()
+                                            messagebox.showinfo("Added successfully","Record has been added to database",parent =add_student_window)
+                                            add_student_window.destroy()
+
+    
+                                        
                                     # add_student_window.destroy()
                                     add_student_window = Toplevel()
                                     add_student_window.title("Score")
                                     add_student_window.geometry("800x600")
                                     add_student_frame1 = Frame(add_student_window)
+                                    add_student_frame2 = Frame(add_student_window)
+                                    add_student_frame3 = Frame(add_student_window)
+                                    
 
-                                    my_canvas = Canvas(add_student_frame1)
+                                    value_label =Label(add_student_frame1,text="Enter Student usn",font=('Lobster 30 bold'),pady=30)
+                                    value_label.grid(row=0,column=0)
+
+                                    my_canvas = Canvas(add_student_frame2)
                                     my_canvas.pack(side=LEFT,fill=BOTH, expand=1)
 
-                                    my_scrollbar = ttk.Scrollbar(add_student_frame1,orient=VERTICAL,command=my_canvas.yview)
+                                    my_scrollbar = ttk.Scrollbar(add_student_frame2,orient=VERTICAL,command=my_canvas.yview)
                                     my_scrollbar.pack(side=RIGHT,fill=Y)
 
                                     my_canvas.configure(yscrollcommand=my_scrollbar.set)
@@ -129,24 +160,7 @@ def submit():
 
                                     selected = table_combo.get()
                                     num = int(num_combo.get())
-                                    # print(selected)
-                                    # print(num)
-
-                                    
-                                    # add_table_labels = Label(add_student_frame1,text="Selected attendence table :",font=('Lobster 30 bold'),pady=30)
-                                    # add_table_labels.grid(row=0, column=0)
-
-                                    # table_selected_labels = Label(add_student_frame1,text=selected,font=('Lobster 30 bold'),pady=30)
-                                    # table_selected_labels.grid(row=0, column=1)
-
-                                    # no_student_labels = Label(add_student_frame1,text="Select number of student",font=('Lobster 30 bold'),pady=30)
-                                    # no_student_labels.grid(row=1, column=0)
-
-                                    # no_student_labels = Label(add_student_frame1,text=num,font=('Lobster 30 bold'),pady=30)
-                                    # no_student_labels.grid(row=1, column=1)
-
-                                    # value_label =Label(add_student_frame1,text="Enter Student usn",font=('Lobster 30 bold'),pady=30)
-                                    # value_label.grid(row=2, column=0)
+                                
 
                                     i=0
                                     for i in range(0,num):
@@ -160,21 +174,13 @@ def submit():
                                         my_entry.grid(row=iterator+3, column=1)
                                         entry_details.append(my_entry)
 
-                                    
-                                    
-
-
-
+                                    add_student_button =Button(add_student_frame3,text="Add Students",   command=add_student, bg="light blue",width="25",height ="3")
+                                    add_student_button.grid(row=1, column=1)
 
                                     add_student_frame1.grid(row=0, column=0)
-                        
-
-                                    
-                                    
-
-                                    
-
-                               
+                                    add_student_frame2.grid(row=1, column=0)
+                                    add_student_frame3.grid(row=2, column=0)
+  
                                 add_student_window = Toplevel()
                                 add_student_window.title("Score")
                                 add_student_window.geometry("800x600")
@@ -221,70 +227,251 @@ def submit():
                                 add_student_frame.pack()
 
                             def attn_records():
+                                def view_attendence():
+                                    return
                                 attendence_window = Toplevel()
                                 attendence_window.title("attendence")
                                 attendence_window.geometry("800x600")
 
-                                def take_attendence():
-                                    pass
-                                lecture_frame = Frame(attendence_window, height="800", width="1000")    
-                                class_no = [
-                                    "1 sem",
-                                    "2 sem",
-                                    "3 sem",
-                                    "4 sem",
-                                ]
+                                querry_string="SELECT attendence_table_name FROM lecture_record WHERE ssid = %s"
+                                my_cursor.execute(querry_string,(usn_no,))
+                                records = my_cursor.fetchall()
+                                data=[]
 
-                                section = [
-                                    "A",
-                                    "B"
-                                ]
+                                for record in records:
+                                    data = data + list(record)
+                                
+
+                                view_attendence_frame = Frame(attendence_window)
+                                view_attendence_frame.pack()
+                                table_labels = Label(view_attendence_frame,text="Select attendence table",font=('Lobster 30 bold'),pady=30)
+                                table_labels.grid(row=0, column=0)
+
+                                table_cliked = StringVar()
+
+                                table_combo = ttk.Combobox(view_attendence_frame,value =data,font=('Lobster 14 bold'),width="20")
+                                table_combo.current(0)
+                                table_combo.grid(row=0, column=1, columnspan=20)
+
+                                submit_button = Button(view_attendence_frame,text="View attendence", pady=10, command=view_attendence)
+                                submit_button.grid(row=4,column=1)
 
 
-                                username_label = Label(lecture_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
-                                username_label.grid(row=1, column=0)
 
-                                username_name_entry = Entry(lecture_frame, font=('Lobster 30 bold'))
-                                username_name_entry.grid(row=1, column=1)
 
-                                class_label = Label(lecture_frame,text="Enter class", font=('Lobster 30 bold'),pady=30)
-                                class_label.grid(row=2, column=0)
+                                # def take_attendence():
+                                #     pass
+                                # lecture_frame = Frame(attendence_window, height="800", width="1000")    
+                                # class_no = [
+                                #     "1 sem",
+                                #     "2 sem",
+                                #     "3 sem",
+                                #     "4 sem",
+                                # ]
 
-                                class_cliked = StringVar()
-                                class_cliked.set(class_no[0])
+                                # section = [
+                                #     "A",
+                                #     "B"
+                                # ]
 
-                                class_combo = ttk.Combobox(lecture_frame,value =class_no,font=('Lobster 14 bold'),width="20")
-                                class_combo.current(0)
-                                class_combo.bind("<<ComboboxSelected>>", selected)
-                                class_combo.grid(row=2, column=1, columnspan=20)
 
-                                section_label = Label(lecture_frame,text="Enter section :", font=('Lobster 30 bold'),pady=30)
-                                section_label.grid(row=3, column=0)
+                                # username_label = Label(lecture_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
+                                # username_label.grid(row=1, column=0)
 
-                                section_clicked = StringVar()
-                                section_clicked.set(section[0])
+                                # username_name_entry = Entry(lecture_frame, font=('Lobster 30 bold'))
+                                # username_name_entry.grid(row=1, column=1)
 
-                                section_combo = ttk.Combobox(lecture_frame,value =section,font=('Lobster 14 bold'),width="20")
-                                section_combo.current(0)
-                                section_combo.bind("<<ComboboxSelected>>", selected)
-                                section_combo.grid(row=3, column=1)
+                                # class_label = Label(lecture_frame,text="Enter class", font=('Lobster 30 bold'),pady=30)
+                                # class_label.grid(row=2, column=0)
 
-                                submit_username_button = Button(lecture_frame,text="submit", pady=10, command=take_attendence)
-                                submit_username_button.grid(row=4,column=1)
-                                lecture_frame.pack()
-                                attendence_window.state("zoomed")
+                                # class_cliked = StringVar()
+                                # class_cliked.set(class_no[0])
+
+                                # class_combo = ttk.Combobox(lecture_frame,value =class_no,font=('Lobster 14 bold'),width="20")
+                                # class_combo.current(0)
+                                # class_combo.bind("<<ComboboxSelected>>", selected)
+                                # class_combo.grid(row=2, column=1, columnspan=20)
+
+                                # section_label = Label(lecture_frame,text="Enter section :", font=('Lobster 30 bold'),pady=30)
+                                # section_label.grid(row=3, column=0)
+
+                                # section_clicked = StringVar()
+                                # section_clicked.set(section[0])
+
+                                # section_combo = ttk.Combobox(lecture_frame,value =section,font=('Lobster 14 bold'),width="20")
+                                # section_combo.current(0)
+                                # section_combo.bind("<<ComboboxSelected>>", selected)
+                                # section_combo.grid(row=3, column=1)
+
+                                # submit_username_button = Button(lecture_frame,text="submit", pady=10, command=take_attendence)
+                                # submit_username_button.grid(row=4,column=1)
+                                # lecture_frame.pack()
+                                # attendence_window.state("zoomed")
 
                             def take_attn():
-                                x,y = 0,0
+
+                                def take_attendence():
+                                    selected = table_combo.get()
+                                    
+
+                                    def sel_cal():
+                                        def ok():
+                                            cal_entry.delete(0,END)
+                                            cal_entry.insert(0,cal.get_date())
+                                            cal_window.destroy()
+                                        cal_window =Toplevel()
+                                        cal_window.title("Calender")
+                                        cal_window.geometry("400x400")
+
+                                        t_year = int(date.today().strftime('%Y'))
+                                        t_month = int(date.today().strftime('%m'))
+                                        t_day = int(date.today().strftime('%d'))
+
+                                        cal = Calendar(cal_window, selectmode = 'day',year = t_year, month= t_month,day = t_day)
+                                        cal.pack(pady = 20)
+
+                                        ok_button = Button(cal_window,text="Select",command=ok)
+                                        ok_button.pack()
+                                    def sel_time():
+                                        time_entry.delete(0,END)
+                                        t_time = time.strftime("%H:%M:%S")
+                                        time_entry.insert(0,t_time)
+
+                                    def save_att():
+                                        i=0
+                                        value =[]
+                                        for entry_detail in entry_details:
+                                            i+=1
+                                            if entry_detail.get()=="":
+                                                messagebox.showwarning("Invalid","All fields are mandatory",parent =take_attendence_window)
+                                            else:                                           
+                                                value.append(entry_detail.get())
+                                        
+                                        value.insert(0,cal_entry.get())
+                                        value.insert(1,time_entry.get())
+
+                                        tuple_value = tuple(value)
+                                        my_cursor.execute(f"INSERT INTO {selected} VALUES {tuple_value}")
+
+                                        mydb.commit()
+                                        messagebox.showinfo("Added successfully","Attendence has been added to database",parent =take_attendence_window)
+                                        take_attendence_window.destroy()
+
+
+                                                
+                                            
+
+                                    take_attendence_frame.destroy()
+                                    global cal_entry
+                                    global time_entry
+                                    
+
+                                    take_attendence_frame1 = Frame(take_attendence_window)
+                                    cal_label =Label(take_attendence_frame1,text="Select date",font=('Lobster 30 bold'),pady=30)
+
+                                    cal_label.grid(row=0,column=0)
+                                    cal_entry =Entry(take_attendence_frame1, width="17",font=('Lobster 20 bold'))
+                                    cal_entry.grid(row=0, column=1)
+
+                                    cal_button = Button(take_attendence_frame1,text="Select", pady=10, command=sel_cal)
+                                    cal_button.grid(row=0, column=2)
+
+                                    time_label = Label(take_attendence_frame1,text="Select date",font=('Lobster 30 bold'),pady=30)
+                                    time_label.grid(row=1,column=0)
+
+                                    time_entry =Entry(take_attendence_frame1, width="17",font=('Lobster 20 bold'))
+                                    time_entry.grid(row=1, column=1)
+
+                                    time_button = Button(take_attendence_frame1,text="Set current time", pady=10, command=sel_time)
+                                    time_button.grid(row=1, column=2)
+
+                                    take_attendence_frame2 = Frame(take_attendence_window)
+                                    name_label =Label(take_attendence_frame2,text="USN",font=('Lobster 30 bold'))
+
+                                    name_label.grid(row=0,column=0)
+
+                                    
+                                    # name_label =Label(take_attendence_frame2,text="Name",font=('Lobster 30 bold'),pady=30)
+
+                                    # name_label.grid(row=0,column=1)
+                                    
+                                    P_or_A_label =Label(take_attendence_frame2,text="P/A",font=('Lobster 30 bold'))
+
+                                    P_or_A_label.grid(row=0,column=1)
+                                    # print(selected)
+
+                                    # querry_string ="SELECT * FROM %s"
+
+                                    my_cursor.execute(f"SHOW COLUMNS FROM {selected}")
+                                    print(selected)
+                                    record = my_cursor.fetchall()
+                                    # print(record)
+                                    i=0
+                                    usn_=[]
+                            
+                                    for records in record:
+                                        usn_.append(record[i][0])
+                                        i+=1
+
+                                    print(usn_)
+                                    usn_list =usn_[2:]
+                                    i=0
+
+                                    for usn in usn_list:
+                                        i+=1
+                                        attn_usn_label = Label(take_attendence_frame2,text=f"{usn}",font=('Lobster 15 bold'))
+                                        attn_usn_label.grid(row=i,column=0)
+
+                                    entry_details =[]
+
+                                    for i in range(1,len(usn_list)+1):
+                                        my_entry = Entry(take_attendence_frame2, width="10",font=('Lobster 15 bold'))
+                                        my_entry.grid(row=i, column=1)
+                                        entry_details.append(my_entry)
+
+                                        
+                                    take_attendence_frame3 = Frame(take_attendence_window)
+                                    save_button = Button(take_attendence_frame3,text="Save", pady=10, command=save_att)
+                                    save_button.grid(row=0, column=2)
+
+
+
+                                    take_attendence_frame1.grid(row=0,column=0)
+
+                                    take_attendence_frame2.grid(row=1,column=0)
+                                    take_attendence_frame3.grid(row=2,column=0)
+                                    # return
+                                # x,y = 0,0
                                 take_attendence_window = Toplevel()
                                 take_attendence_window.title("Take Attendence")
                                 take_attendence_window.geometry("800x600")
 
-                                student_name_label = Label(take_attendence_window,text="name")
-                                student_name_label.grid(row=x,column=y)
+                                querry_string="SELECT attendence_table_name FROM lecture_record WHERE ssid = %s"
+                                my_cursor.execute(querry_string,(usn_no,))
+                                records = my_cursor.fetchall()
+                                data=[]
 
-                                student_name_entry = Entry(take_attendence_window,width=2)
-                                student_name_entry.grid(row=x, column=y+1)
+                                for record in records:
+                                    data = data + list(record)
+                                
+
+                                take_attendence_frame = Frame(take_attendence_window)
+                                take_attendence_frame.pack()
+                                table_labels = Label(take_attendence_frame,text="Select attendence table",font=('Lobster 30 bold'),pady=30)
+                                table_labels.grid(row=0, column=0)
+
+                                table_cliked = StringVar()
+
+                                table_combo = ttk.Combobox(take_attendence_frame,value =data,font=('Lobster 14 bold'),width="20")
+                                table_combo.current(0)
+                                table_combo.grid(row=0, column=1, columnspan=20)
+
+                                submit_button = Button(take_attendence_frame,text="Take attendence", pady=10, command=take_attendence)
+                                submit_button.grid(row=4,column=1)
+
+
+
+
 
 
                             
@@ -946,7 +1133,7 @@ def submit():
                                                     my_cursor.execute(query_string,value)
 
                                                     my_cursor.execute(f"""CREATE TABLE {table_value} (
-                                                        Date date,
+                                                        Date varchar(20),
                                                         Time time
                                                     )
                                                     """)
@@ -955,7 +1142,7 @@ def submit():
                                                     messagebox.showinfo("Added successfully","Record has been added to database",parent =add_subjects_window)
                                                     add_subjects_window.destroy()
                                             except:
-                                                messagebox.showerror("Invalid","Record is already present in database",parent =add_subjects_window)
+                                                messagebox.showerror("Invalid","Record is already present in database or Subject is not found",parent =add_subjects_window)
                                                 
                                         except:
                                             messagebox.showwarning("Invalid","Given SSID is not found ",parent =add_subjects_window)
