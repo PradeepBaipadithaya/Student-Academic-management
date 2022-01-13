@@ -1,4 +1,5 @@
 from os import _exit
+import re
 from tkinter import *
 from tkinter.font import Font
 from PIL import ImageTk,Image
@@ -129,9 +130,9 @@ def submit():
                                             
                                             my_cursor.execute(f"ALTER TABLE {selected} ADD {usn} VARCHAR(100)")
                                             
-                                            mydb.commit()
-                                            messagebox.showinfo("Added successfully","Record has been added to database",parent =add_student_window)
-                                            add_student_window.destroy()
+                                        mydb.commit()
+                                        messagebox.showinfo("Added successfully","Record has been added to database",parent =add_student_window)
+                                        add_student_window.destroy()
 
     
                                         
@@ -228,10 +229,91 @@ def submit():
 
                             def attn_records():
                                 def view_attendence():
-                                    return
+                                    selected=table_combo.get()
+                                    view_attendence_frame.destroy()
+
+                                    view_attendece_frame1 = Frame(attendence_window)
+                                    view_attendece_frame2 = Frame(attendence_window)
+
+                                    table_label = Label(view_attendece_frame1,text="Attendence table: ",font=('Lobster 15'))
+                                    table_label.grid(row=0, column=0)
+                                    table_name_label = Label(view_attendece_frame1,text=f"{selected}",font=('Lobster 15'))
+                                    table_name_label.grid(row=0, column=1)
+
+                                    my_tree = ttk.Treeview(view_attendece_frame2)
+                                    my_tree['columns'] = ("USN","Total Class","Total Present","Pecentage")
+
+                                    my_tree.column("#0",width=0,stretch=NO)
+                                    # my_tree.column("Name",anchor=W,width=120)
+                                    my_tree.column("USN",anchor=CENTER,width=120)
+                                    my_tree.column("Total Class",anchor=CENTER,width=120)
+                                    my_tree.column("Total Present",anchor=CENTER,width=120)
+                                    my_tree.column("Pecentage",anchor=CENTER,width=120)
+
+                                    my_tree.heading("#0",text="", anchor=W)
+                                    # my_tree.heading("Name",text="Name", anchor=W)
+                                    my_tree.heading("USN",text="USN", anchor=CENTER)
+                                    my_tree.heading("Total Class",text="Total Class", anchor=CENTER)
+                                    my_tree.heading("Total Present",text="Total Present", anchor=CENTER)
+                                    my_tree.heading("Pecentage",text="Pecentage", anchor=CENTER)
+
+                                    
+                                    
+                                    my_cursor.execute(f"SHOW COLUMNS FROM {selected}")
+                                    print(selected)
+                                    record1 = my_cursor.fetchall()
+
+                                    # my_cursor.execute(f"")
+                                    # # print(record)
+                                    i=0
+                                    usn_=[]
+                            
+                                    for records in record1:
+                                        usn_.append(record1[i][0])
+                                        i+=1
+
+                                    
+                                    usn_list =usn_[2:]
+                                    # print(usn_)
+                                    querry_list=[]
+                                    result_list=[]
+                                    i=0
+                                    for usn in usn_list:
+                                        result_list.append(usn)
+                                        my_cursor.execute(f"SELECT COUNT(*) FROM {selected}")
+                                        record2 =my_cursor.fetchall()
+                                        # print(record2)
+                                        # total_attendence_list =list(record2[0][0])
+                                        result_list.append(record2[0][0])
+
+                                        my_cursor.execute(f"SELECT COUNT(*) FROM {selected} WHERE {usn} ='p'")
+                                        record3 =my_cursor.fetchall()
+                                        # print(record2)
+                                        # total_attendence_list =list(record3[0][0])
+                                        result_list.append(record3[0][0])
+
+                                        percentage = (record3[0][0]/record2[0][0])*100
+                                        result_list.append(percentage)
+                                        result_tuple = tuple(result_list)
+                                        # print(result_tuple)
+                                        querry_list.insert(i,result_tuple)
+                                        result_list.clear()
+
+                                        i+=1
+                                    
+                                    j=0
+                                    for query in querry_list:
+                                        my_tree.insert(parent='',index='end',iid=j,text="",values=query)
+                                        j+=1
+                                    my_tree.pack()
+                                    # print(querry_list)
+                                    view_attendece_frame1.grid(row=0, column=0)
+                                    view_attendece_frame2.grid(row=1, column=0)
+
                                 attendence_window = Toplevel()
                                 attendence_window.title("attendence")
                                 attendence_window.geometry("800x600")
+                                global view_attendence_frame
 
                                 querry_string="SELECT attendence_table_name FROM lecture_record WHERE ssid = %s"
                                 my_cursor.execute(querry_string,(usn_no,))
@@ -243,7 +325,7 @@ def submit():
                                 
 
                                 view_attendence_frame = Frame(attendence_window)
-                                view_attendence_frame.pack()
+                                
                                 table_labels = Label(view_attendence_frame,text="Select attendence table",font=('Lobster 30 bold'),pady=30)
                                 table_labels.grid(row=0, column=0)
 
@@ -255,6 +337,8 @@ def submit():
 
                                 submit_button = Button(view_attendence_frame,text="View attendence", pady=10, command=view_attendence)
                                 submit_button.grid(row=4,column=1)
+
+                                view_attendence_frame.pack()
 
 
 
@@ -469,35 +553,6 @@ def submit():
                                 submit_button = Button(take_attendence_frame,text="Take attendence", pady=10, command=take_attendence)
                                 submit_button.grid(row=4,column=1)
 
-
-
-
-
-
-                            
-
-                            subcode_no =[
-                                "18CS54",
-                                "18CS44",
-                                "18CS32"
-                                
-
-                            ]
-
-                            class_no = [
-                                    "1 sem",
-                                    "2 sem",
-                                    "3 sem",
-                                    "4 sem",
-                                ]
-
-                            section = [
-                                    "A",
-                                    "B"
-                                ]
-                            def selected(event):
-                                return
-                            
                             login_frame.destroy()
                             querry_string = "SELECT name,ssid FROM lecture_details WHERE ssid =%s"
                             my_cursor.execute(querry_string,(usn_no,))
@@ -1247,28 +1302,108 @@ def submit():
                         elif record[0][1]== "S":
 
                             def view_attendence():
-                                def submit():
-                                    return
-                                view_attendece_window = Toplevel()
-                                view_attendece_window.title("Add records")
-                                view_attendece_window.geometry("600x800")
-                                view_attendece_window.configure(background='#EAF8F8')
+                                student_frame.destroy()
+                                view_attendence_frame =Toplevel()
+                                view_attendence_frame.title("attendence")
+                                view_attendence_frame.geometry("800x600")
 
-                                usn_frame = Frame(view_attendece_window)
-                                subcode_label = Label(usn_frame,text="Enter Subject Code", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
-                                subcode_label.grid(row=0, column=0)
-                                subcode_entry = Entry(usn_frame, width="17",font=('Lobster 20 bold'))
-                                subcode_entry.grid(row=0, column=1,padx=10)
+                                student_frame1 = Frame(view_attendence_frame)
+                                my_tree = ttk.Treeview(student_frame1)
+                                my_tree['columns'] = ("Subject Name","Total Class","Total Present","Pecentage")
 
+                                my_tree.column("#0",width=0,stretch=NO)
+                                    # my_tree.column("Name",anchor=W,width=120)
+                                my_tree.column("Subject Name",anchor=CENTER,width=120)
+                                my_tree.column("Total Class",anchor=CENTER,width=120)
+                                my_tree.column("Total Present",anchor=CENTER,width=120)
+                                my_tree.column("Pecentage",anchor=CENTER,width=120)
+
+                                my_tree.heading("#0",text="", anchor=W)
+                                    # my_tree.heading("Name",text="Name", anchor=W)
+                                my_tree.heading("Subject Name",text="Subject Name", anchor=CENTER)
+                                my_tree.heading("Total Class",text="Total Class", anchor=CENTER)
+                                my_tree.heading("Total Present",text="Total Present", anchor=CENTER)
+                                my_tree.heading("Pecentage",text="Pecentage", anchor=CENTER)
+
+                                    
+
+
+                                my_cursor.execute("SELECT sem,sec FROM student_details WHERE usn =")
+                                record = my_cursor.fetchall()
+                                sem = record[0][0]
+                                sec = record[0][1]
+                                my_cursor.execute(f"SELECT subcode,attendence_table_name FROM lecture_record WHERE sem ={sem} AND sec ={sec}")
+                                record1 = my_cursor.fetchall()
+                                subject =[]
+                                subject_table =[]
+                                #  list(record1[0][0])
+                                for item in record1:
+                                    for sub,sub_table in item:
+                                        subject.append(sub)
+                                        subject_table.append(sub_table)
+
+                                for selected in subject_table:
+                                    my_cursor.execute(f"SHOW COLUMNS FROM {selected}")
+                                    print(selected)
+                                    record1 = my_cursor.fetchall()
+
+                                        # my_cursor.execute(f"")
+                                        # # print(record)
+                                    i=0
+                                    usn_=[]
                                 
+                                    for records in record1:
+                                        usn_.append(record1[i][0])
+                                        i+=1
 
-                                submit_button =Button(usn_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
-                                submit_button.grid(row=1, column=1)
-                                usn_frame.pack()
+                                        
+                                    usn_list =usn_[2:]
+                                    # print(usn_)
+                                    querry_list=[]
+                                    result_list=[]
+                                    i=0
+                                    for usn in usn_list:
+                                        result_list.append(usn)
+                                        my_cursor.execute(f"SELECT COUNT(*) FROM {selected}")
+                                        record2 =my_cursor.fetchall()
+                                        # print(record2)
+                                        # total_attendence_list =list(record2[0][0])
+                                        result_list.append(record2[0][0])
+
+                                        my_cursor.execute(f"SELECT COUNT(*) FROM {selected} WHERE {usn} ='p'")
+                                        record3 =my_cursor.fetchall()
+                                        # print(record2)
+                                        # total_attendence_list =list(record3[0][0])
+                                        result_list.append(record3[0][0])
+
+                                        percentage = (record3[0][0]/record2[0][0])*100
+                                        result_list.append(percentage)
+                                        result_tuple = tuple(result_list)
+                                        # print(result_tuple)
+                                        querry_list.insert(i,result_tuple)
+                                        result_list.clear()
+
+                                        i+=1
+
+                                    j=0
+                                    for query in querry_list:
+                                        my_tree.insert(parent='',index='end',iid=j,text="",values=query)
+                                        j+=1
+                                    my_tree.pack()
+
+                                        
+
+
+
+                                    student_frame1.grid(row=0,column=0) 
 
 
 
                             login_frame.destroy()
+                            querry_string = "SELECT name,usn FROM student_details WHERE usn =%s"
+                            my_cursor.execute(querry_string,(usn_no,))
+                            record = my_cursor.fetchall()
+
                             student_frame = Frame(root, height="800", width="1000")
                             student_frame.pack(side=TOP, expand=YES)
 
@@ -1276,13 +1411,13 @@ def submit():
                             L_username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
                             L_username_label.grid(row=0, column=0)
 
-                            L_username_name_label = Label(text_frame,text="Pradeep", font=('Lobster 30 bold'), pady=30)
+                            L_username_name_label = Label(text_frame,text=f"{record[0][0]}", font=('Lobster 30 bold'), pady=30)
                             L_username_name_label.grid(row=0, column=1)
 
                             usn_label = Label(text_frame,text="USN :", font=('Lobster 30 bold'), pady=30)
                             usn_label.grid(row=1, column=0)
 
-                            usn_id_label = Label(text_frame, text="948", font=('Lobster 30 bold'),pady=30)
+                            usn_id_label = Label(text_frame, text=f"{record[0][1]}", font=('Lobster 30 bold'),pady=30)
                             usn_id_label.grid(row=1, column=1)
 
                             funtionality_label = Label(text_frame,text="Funtionality", font=('Lobster 40 bold'),pady=30)
