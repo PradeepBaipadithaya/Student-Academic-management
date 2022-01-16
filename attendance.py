@@ -2,6 +2,7 @@ from os import _exit
 import re
 from tkinter import *
 from tkinter.font import Font
+from turtle import right
 from PIL import ImageTk,Image
 import PIL
 import sqlite3
@@ -14,8 +15,9 @@ from datetime import date
 import time
 
 root =Tk()
-root.title("Login Page")
+root.title("Student Attendence Management")
 root.configure(background='#EAF8F8')
+root.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
 Font_tuple = (("Comic Sans MS", 30, "bold"),("Island Moments",20,""))
 mydb = mysql.connector.connect(buffered=True,#Used buffered because i am using fetchall and fetchall reqires its buffered  to be cleaned each time it iterates
     host = "localhost",
@@ -58,12 +60,13 @@ def submit():
 
                             else:
                                 my_cursor = mydb.cursor()
-                                querry_string ="UPDATE login SET password =%s WHERE usn =%s"
+                                querry_string ="UPDATE login SET password =%s, security_key =NULL WHERE usn =%s"
                                 my_cursor.execute(querry_string,(new_passwd_entry.get(),usn_no))
                                 mydb.commit()
                                 messagebox.showinfo("Successful","Password has updated")
-
                                 exit()
+
+                                
                                 
                         global img
                         # print(record[0][2])
@@ -78,114 +81,98 @@ def submit():
 
 
                         text_frame = Frame(signup_frame, bg="white")
-                        password_label = Label(text_frame, text="Enter Password", font=('Lobster 30 bold'), bg="white", fg="blue",pady=30, anchor=NW)
+                        password_label = Label(text_frame, text="Enter Password", font=Font_tuple[0], bg="white", fg="blue",pady=30, anchor=NW)
                         password_label.grid(row=0, column=0)
 
-                        security_key_label =Label(text_frame,text="Security Key :",font=("Ubuntu 20"), bg="white",pady=15)
+                        security_key_label =Label(text_frame,text="Security Key :",font=("'Lobster 25 "), bg="white", pady=15)
                         security_key_label.grid(row=1, column=0)
 
-                        new_passwd_label =Label(text_frame,text="New Password :",font=("Ubuntu 20"), bg="white",pady=15)
+                        new_passwd_label =Label(text_frame,text="New Password :",font=("'Lobster 25 "), bg="white", pady=15)
                         new_passwd_label.grid(row=2, column=0)
 
-                        rewrite_passwd_label =Label(text_frame,text="Re Enter Password :",font=("Ubuntu 20"), bg="white", pady=15)
+                        rewrite_passwd_label =Label(text_frame,text="Re Enter Password :",font=("'Lobster 25 "), bg="white", pady=15)
                         rewrite_passwd_label.grid(row=3, column=0)
 
-                        security_key_entry = Entry(text_frame, width=20, font=("Ubuntu",20))
+                        security_key_entry = Entry(text_frame, width=17,font=("Lobster 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
                         security_key_entry.grid(row=1, column=1,padx=10)
 
-                        new_passwd_entry = Entry(text_frame, width=20, font=("Ubuntu",20))
+                        new_passwd_entry = Entry(text_frame, width=17,font=("Lobster 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
                         new_passwd_entry.grid(row=2, column=1,padx=10)
 
-                        rewrite_passwd_entry = Entry(text_frame,show="*", width=20,font=("Ubuntu",20))
+                        rewrite_passwd_entry = Entry(text_frame,show="*", width=17,font=("Lobster 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
                         rewrite_passwd_entry.grid(row=3, column=1,padx=10)
 
-                        submit_button = Button(text_frame,text="Submit", bg="blue", fg="white",font=("Ubuntu 15"),command=submit)
-                        submit_button.grid(row=5, column=1,padx=10)
+                        submit_button = Button(text_frame,text="Submit",font=("Lobster 17 bold "), bg="#1A73E8",fg ="#F9F2FA",highlightthickness=2, highlightcolor = 'red', cursor="hand2",command=submit)
+                        submit_button.grid(row=5, column=1,padx=20,pady=25,ipadx=20,ipady=3)
 
 
 
                         text_frame.grid(row=0, column=1)
+
                        
                     else:
 
                         if record[0][1]=="L":
-
-
-                            def add_student():                              
-                                
+                            def add_student():                                                             
                                 def add_stud():
-                                    def add_student():
-                                        value =[]
-                                        for entry_detail in entry_details:
-                                            # print(items.get())
-                                            
-                                            if entry_detail.get()=="":
-                                                messagebox.showwarning("Invalid","All fields are mandatory",parent =add_student_window)
-
-                                            else:
-                                                value.append(entry_detail.get())
-                                        
-                                        for usn in value:
-                                            # querry_string = "ALTER TABLE "+f"{selected}"+" ADD " +f"{usn} "+"VARCHAR(100)"
-                                            
-                                            my_cursor.execute(f"ALTER TABLE {selected} ADD {usn} VARCHAR(100)")
-                                            
-                                        mydb.commit()
-                                        messagebox.showinfo("Added successfully","Record has been added to database",parent =add_student_window)
-                                        add_student_window.destroy()
-
-    
-                                        
-                                    # add_student_window.destroy()
-                                    add_student_window = Toplevel()
-                                    add_student_window.title("Score")
-                                    add_student_window.geometry("800x600")
-                                    add_student_frame1 = Frame(add_student_window)
-                                    add_student_frame2 = Frame(add_student_window)
-                                    add_student_frame3 = Frame(add_student_window)
-                                    
-
-                                    value_label =Label(add_student_frame1,text="Enter Student usn",font=('Lobster 30 bold'),pady=30)
-                                    value_label.grid(row=0,column=0)
-
-                                    my_canvas = Canvas(add_student_frame2)
-                                    my_canvas.pack(side=LEFT,fill=BOTH, expand=1)
-
-                                    my_scrollbar = ttk.Scrollbar(add_student_frame2,orient=VERTICAL,command=my_canvas.yview)
-                                    my_scrollbar.pack(side=RIGHT,fill=Y)
-
-                                    my_canvas.configure(yscrollcommand=my_scrollbar.set)
-                                    my_canvas.bind('<Configure>',lambda e:my_canvas.configure(scrollregion=my_canvas.bbox("all")))
-                                    second_frame = Frame(my_canvas)
-                                    my_canvas.create_window((0,0),window=second_frame,anchor="nw")
-
                                     selected = table_combo.get()
                                     num = int(num_combo.get())
-                                
+                                    def add_student():                                        
+                                        value =[]
+                                        try:
+                                            count =0
+                                            for entry_detail in entry_details:
+                                                if entry_detail.get()=="":
+                                                    count+=1
+                                                
+                                                else:
+                                                    my_cursor.execute(f"ALTER TABLE {selected} ADD {entry_detail.get()} VARCHAR(100)")
+                                                    entry_detail.delete(0,END)
+                                            
+                                                    mydb.commit()
+                                            if count!=0:
+                                                messagebox.showwarning("Invalid","Entered record are updated into database",parent =add_student_window)
+                                            else:
+                                                messagebox.showinfo("Added successfully","Record has been added to database",parent =add_student_window)
+                                                add_student_window.destroy()
+                                        except:
+                                            messagebox.showwarning("Invalid","One or more record is/are already present",parent =add_student_window)
+
+                                    add_student_frame.destroy()
+                                    add_full_student_frame =Frame(add_student_window,bg="white")
+                                    add_full_student_frame.pack(side=TOP,expand=YES)
+                                    add_student_frame1 = Frame(add_full_student_frame,bg="white")
+                                    add_student_frame2 = Frame(add_full_student_frame,bg="white")
+                                    add_student_frame3 = Frame(add_full_student_frame,bg="white")
+
+                                    value_label =Label(add_student_frame1,text="Enter Student Roll No.",font=("'Lobster 25 "), bg="white", pady=15)
+                                    value_label.grid(row=0,column=0)
 
                                     i=0
                                     for i in range(0,num):
-                                        name_labels = Label(second_frame,text=f"Student {i+1}) ",font=('Lobster 30 bold'))
+                                        name_labels = Label(add_student_frame2,text=f"Student {i+1}) ", font=('Lobster 15 bold'),pady=10,bg='white')
                                         name_labels.grid(row=i+3,column=0)
 
                                     entry_details=[]
                                     for iterator in range(0,num):
-                                        my_entry = Entry(second_frame, width="22",font=('Lobster 15 bold'))
+                                        my_entry = Entry(add_student_frame2, width="22", font=('Lobster 15 bold'),bg='white',highlightthickness=2,cursor="hand2")
                                         
                                         my_entry.grid(row=iterator+3, column=1)
                                         entry_details.append(my_entry)
 
-                                    add_student_button =Button(add_student_frame3,text="Add Students",   command=add_student, bg="light blue",width="25",height ="3")
-                                    add_student_button.grid(row=1, column=1)
+                                    add_student_button =Button(add_student_frame3,text="Add Students",   command=add_student,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                    add_student_button.grid(row=1, column=1,padx=20,pady=25,ipadx=15,ipady=5)
 
                                     add_student_frame1.grid(row=0, column=0)
                                     add_student_frame2.grid(row=1, column=0)
                                     add_student_frame3.grid(row=2, column=0)
   
                                 add_student_window = Toplevel()
-                                add_student_window.title("Score")
-                                add_student_window.geometry("800x600")
-                                add_student_frame = Frame(add_student_window)
+                                add_student_window.title("Add Student")
+                                add_student_window.geometry("800x750")
+                                add_student_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
+                                add_student_window.configure(background='#EAF8F8')
+                                add_student_frame = Frame(add_student_window,bg="white")
                                 global num_student_entry
                                 
 
@@ -193,12 +180,12 @@ def submit():
                                 my_cursor.execute(querry_string,(usn_no,))
                                 records = my_cursor.fetchall()
                                 data =[]
-                                num = list(range(1,101))
+                                num = list(range(1,11))
                                 
                                 for record in records:
                                     data = data + list(record)
 
-                                table_labels = Label(add_student_frame,text="Select attendence table",font=('Lobster 30 bold'),pady=30)
+                                table_labels = Label(add_student_frame,text="Select attendence table",font=("'Lobster 25 "), bg="white", pady=15)
                                 table_labels.grid(row=0, column=0)
 
                                 # print(data)
@@ -209,10 +196,10 @@ def submit():
                                 table_combo.current(0)
                                 table_combo.grid(row=0, column=1, columnspan=20)
 
-                                num_student_labels = Label(add_student_frame,text="Select number of student",font=('Lobster 30 bold'),pady=30)
+                                num_student_labels = Label(add_student_frame,text="Select number of student",font=("'Lobster 25 "), bg="white", pady=15)
                                 num_student_labels.grid(row=1, column=0)
 
-                                num_cliked = StringVar()
+                                # num_cliked = StringVar()
                                 # num_cliked.set(num[1])
 
                                 num_combo = ttk.Combobox(add_student_frame,value =num,font=('Lobster 14 bold'),width="20")
@@ -221,23 +208,23 @@ def submit():
 
                                 
 
-                                submit_button = Button(add_student_frame,text="submit", pady=10, command=add_stud)
-                                submit_button.grid(row=4,column=1)
+                                submit_button = Button(add_student_frame,text="submit",font=("Lobster 17 bold "), command=add_stud, bg="#1A73E8",fg ="#F9F2FA", cursor="hand2")
+                                submit_button.grid(row=4,column=1,padx=20,pady=25,ipadx=20,ipady=3)
 
 
-                                add_student_frame.pack()
+                                add_student_frame.pack(side=TOP,expand=YES)
 
                             def attn_records():
                                 def view_attendence():
                                     selected=table_combo.get()
                                     view_attendence_frame.destroy()
 
-                                    view_attendece_frame1 = Frame(attendence_window)
-                                    view_attendece_frame2 = Frame(attendence_window)
+                                    view_attendece_frame1 = Frame(attendence_window,bg="white")
+                                    view_attendece_frame2 = Frame(attendence_window,bg="white")
 
-                                    table_label = Label(view_attendece_frame1,text="Attendence table: ",font=('Lobster 15'))
+                                    table_label = Label(view_attendece_frame1,text="Attendence table: ",font=('Lobster 15'),bg="#EAF8F8")
                                     table_label.grid(row=0, column=0)
-                                    table_name_label = Label(view_attendece_frame1,text=f"{selected}",font=('Lobster 15'))
+                                    table_name_label = Label(view_attendece_frame1,text=f"{selected}",font=('Lobster 15'),bg="#EAF8F8")
                                     table_name_label.grid(row=0, column=1)
 
                                     my_tree = ttk.Treeview(view_attendece_frame2)
@@ -291,8 +278,9 @@ def submit():
                                         # print(record2)
                                         # total_attendence_list =list(record3[0][0])
                                         result_list.append(record3[0][0])
+                                        num = (record3[0][0]/record2[0][0])*100
 
-                                        percentage = (record3[0][0]/record2[0][0])*100
+                                        percentage =  '%.2f' % num
                                         result_list.append(percentage)
                                         result_tuple = tuple(result_list)
                                         # print(result_tuple)
@@ -311,8 +299,10 @@ def submit():
                                     view_attendece_frame2.grid(row=1, column=0)
 
                                 attendence_window = Toplevel()
-                                attendence_window.title("attendence")
+                                attendence_window.title("Attendence Record")
                                 attendence_window.geometry("800x600")
+                                attendence_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
+                                attendence_window.config(background='#EAF8F8')
                                 global view_attendence_frame
 
                                 querry_string="SELECT attendence_table_name FROM lecture_record WHERE ssid = %s"
@@ -324,9 +314,9 @@ def submit():
                                     data = data + list(record)
                                 
 
-                                view_attendence_frame = Frame(attendence_window)
+                                view_attendence_frame = Frame(attendence_window,bg="white")
                                 
-                                table_labels = Label(view_attendence_frame,text="Select attendence table",font=('Lobster 30 bold'),pady=30)
+                                table_labels = Label(view_attendence_frame,text="Select attendence table",font=("'Lobster 25 "), bg="white", pady=15)
                                 table_labels.grid(row=0, column=0)
 
                                 table_cliked = StringVar()
@@ -335,10 +325,10 @@ def submit():
                                 table_combo.current(0)
                                 table_combo.grid(row=0, column=1, columnspan=20)
 
-                                submit_button = Button(view_attendence_frame,text="View attendence", pady=10, command=view_attendence)
-                                submit_button.grid(row=4,column=1)
+                                submit_button = Button(view_attendence_frame,text="View attendence",  command=view_attendence, font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                submit_button.grid(row=4,column=1,padx=20,pady=25,ipadx=15,ipady=4)
 
-                                view_attendence_frame.pack()
+                                view_attendence_frame.pack(side=TOP,expand=YES)
 
 
 
@@ -396,8 +386,6 @@ def submit():
 
                                 def take_attendence():
                                     selected = table_combo.get()
-                                    
-
                                     def sel_cal():
                                         def ok():
                                             cal_entry.delete(0,END)
@@ -405,7 +393,9 @@ def submit():
                                             cal_window.destroy()
                                         cal_window =Toplevel()
                                         cal_window.title("Calender")
-                                        cal_window.geometry("400x400")
+                                        cal_window.geometry("400x300")
+                                        cal_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
+                                        cal_window.configure(background='#EAF8F8')
 
                                         t_year = int(date.today().strftime('%Y'))
                                         t_month = int(date.today().strftime('%m'))
@@ -414,32 +404,37 @@ def submit():
                                         cal = Calendar(cal_window, selectmode = 'day',year = t_year, month= t_month,day = t_day)
                                         cal.pack(pady = 20)
 
-                                        ok_button = Button(cal_window,text="Select",command=ok)
+                                        ok_button = Button(cal_window,text="Select",command=ok,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
                                         ok_button.pack()
-                                    def sel_time():
-                                        time_entry.delete(0,END)
-                                        t_time = time.strftime("%H:%M:%S")
-                                        time_entry.insert(0,t_time)
+                                    # def sel_time():
+                                    #     time_entry.delete(0,END)
+                                    #     t_time = time.strftime("%H:%M:%S")
+                                    #     time_entry.insert(0,t_time)
 
                                     def save_att():
                                         i=0
                                         value =[]
-                                        for entry_detail in entry_details:
-                                            i+=1
-                                            if entry_detail.get()=="":
-                                                messagebox.showwarning("Invalid","All fields are mandatory",parent =take_attendence_window)
-                                            else:                                           
-                                                value.append(entry_detail.get())
-                                        
-                                        value.insert(0,cal_entry.get())
-                                        value.insert(1,time_entry.get())
+                                        try:
+                                            for entry_detail in entry_details:
+                                                    
+                                                    if entry_detail.get()=="":
+                                                        i+=1
+                                                    else:                                           
+                                                        value.insert(i,entry_detail.get())
+                                                        i+=1
+                                                
+                                            value.insert(0,cal_entry.get())
+                                            value.insert(1,time_combo.get())
 
-                                        tuple_value = tuple(value)
-                                        my_cursor.execute(f"INSERT INTO {selected} VALUES {tuple_value}")
+                                            tuple_value = tuple(value)
+                                            my_cursor.execute(f"INSERT INTO {selected} VALUES {tuple_value}")
 
-                                        mydb.commit()
-                                        messagebox.showinfo("Added successfully","Attendence has been added to database",parent =take_attendence_window)
-                                        take_attendence_window.destroy()
+                                            mydb.commit()
+                                            print(value)
+                                            messagebox.showinfo("Added successfully","Attendence has been added to database",parent =take_attendence_window)
+                                            take_attendence_window.destroy()
+                                        except :
+                                            messagebox.showwarning("Invalid","All fields are mandatory",parent =take_attendence_window)
 
 
                                                 
@@ -448,44 +443,43 @@ def submit():
                                     take_attendence_frame.destroy()
                                     global cal_entry
                                     global time_entry
-                                    
-
-                                    take_attendence_frame1 = Frame(take_attendence_window)
-                                    cal_label =Label(take_attendence_frame1,text="Select date",font=('Lobster 30 bold'),pady=30)
+                                    time =[
+                                        "9-10",
+                                        "10-11",
+                                        "11-12",
+                                        "12-1",
+                                        "2-3",
+                                        "3-4"
+                                    ]
+                                    take_attendence_full_frame = Frame(take_attendence_window,bg ="white")
+                                    take_attendence_full_frame.pack(side=TOP,expand=YES)
+                                    take_attendence_frame1 = Frame(take_attendence_full_frame,bg ="white")
+                                    cal_label =Label(take_attendence_frame1,text="Select date : ",font=("'Lobster 25 "), bg="white", pady=15)
 
                                     cal_label.grid(row=0,column=0)
-                                    cal_entry =Entry(take_attendence_frame1, width="17",font=('Lobster 20 bold'))
+                                    cal_entry =Entry(take_attendence_frame1, width="15",font=('Lobster 20 bold'),highlightthickness=2)
                                     cal_entry.grid(row=0, column=1)
 
-                                    cal_button = Button(take_attendence_frame1,text="Select", pady=10, command=sel_cal)
-                                    cal_button.grid(row=0, column=2)
+                                    cal_button = Button(take_attendence_frame1,text="Select", command=sel_cal, font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                    cal_button.grid(row=0, column=2,padx=20,pady=25,ipadx=15,ipady=4)
 
-                                    time_label = Label(take_attendence_frame1,text="Select date",font=('Lobster 30 bold'),pady=30)
+                                    time_label = Label(take_attendence_frame1,text="Select Time :",font=("'Lobster 25 "), bg="white", pady=15)
                                     time_label.grid(row=1,column=0)
 
-                                    time_entry =Entry(take_attendence_frame1, width="17",font=('Lobster 20 bold'))
-                                    time_entry.grid(row=1, column=1)
+          
+                                    time_combo = ttk.Combobox(take_attendence_frame1,value =time,font=("Lobster 20 "))
+                                    time_combo.current(0)
+                                    time_combo.grid(row=1, column=1, columnspan=20)
 
-                                    time_button = Button(take_attendence_frame1,text="Set current time", pady=10, command=sel_time)
-                                    time_button.grid(row=1, column=2)
-
-                                    take_attendence_frame2 = Frame(take_attendence_window)
-                                    name_label =Label(take_attendence_frame2,text="USN",font=('Lobster 30 bold'))
+                                    take_attendence_frame2 = Frame(take_attendence_full_frame,bg="white")
+                                    name_label =Label(take_attendence_frame2,text="USN",font=("'Lobster 25 "), bg="white", pady=15)
 
                                     name_label.grid(row=0,column=0)
 
-                                    
-                                    # name_label =Label(take_attendence_frame2,text="Name",font=('Lobster 30 bold'),pady=30)
+                                    P_or_A_label =Label(take_attendence_frame2,text="P/A",font=("'Lobster 25 "), bg="white", pady=15)
 
-                                    # name_label.grid(row=0,column=1)
-                                    
-                                    P_or_A_label =Label(take_attendence_frame2,text="P/A",font=('Lobster 30 bold'))
-
-                                    P_or_A_label.grid(row=0,column=1)
-                                    # print(selected)
-
-                                    # querry_string ="SELECT * FROM %s"
-
+                                    P_or_A_label.grid(row=0,column=1,sticky=E,ipadx=20)
+                 
                                     my_cursor.execute(f"SHOW COLUMNS FROM {selected}")
                                     print(selected)
                                     record = my_cursor.fetchall()
@@ -503,20 +497,20 @@ def submit():
 
                                     for usn in usn_list:
                                         i+=1
-                                        attn_usn_label = Label(take_attendence_frame2,text=f"{usn}",font=('Lobster 15 bold'))
-                                        attn_usn_label.grid(row=i,column=0)
+                                        attn_usn_label = Label(take_attendence_frame2,text=f"{usn}",font=('Lobster 15 bold'),bg="white")
+                                        attn_usn_label.grid(row=i,column=0,sticky=W)
 
                                     entry_details =[]
 
                                     for i in range(1,len(usn_list)+1):
-                                        my_entry = Entry(take_attendence_frame2, width="10",font=('Lobster 15 bold'))
-                                        my_entry.grid(row=i, column=1)
+                                        my_entry = Entry(take_attendence_frame2, width="10",font=('Lobster 15 bold'),bg="white",highlightthickness=2)
+                                        my_entry.grid(row=i, column=1,sticky=E)
                                         entry_details.append(my_entry)
 
                                         
-                                    take_attendence_frame3 = Frame(take_attendence_window)
-                                    save_button = Button(take_attendence_frame3,text="Save", pady=10, command=save_att)
-                                    save_button.grid(row=0, column=2)
+                                    take_attendence_frame3 = Frame(take_attendence_full_frame,bg="white")
+                                    save_button = Button(take_attendence_frame3,text="Save",command=save_att, font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                    save_button.grid(row=0, column=2,padx=20,pady=25,ipadx=15,ipady=4)
 
 
 
@@ -529,6 +523,8 @@ def submit():
                                 take_attendence_window = Toplevel()
                                 take_attendence_window.title("Take Attendence")
                                 take_attendence_window.geometry("800x600")
+                                take_attendence_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
+                                take_attendence_window.configure(background='#EAF8F8')
 
                                 querry_string="SELECT attendence_table_name FROM lecture_record WHERE ssid = %s"
                                 my_cursor.execute(querry_string,(usn_no,))
@@ -539,88 +535,68 @@ def submit():
                                     data = data + list(record)
                                 
 
-                                take_attendence_frame = Frame(take_attendence_window)
-                                take_attendence_frame.pack()
-                                table_labels = Label(take_attendence_frame,text="Select attendence table",font=('Lobster 30 bold'),pady=30)
+                                take_attendence_frame = Frame(take_attendence_window,bg="White")
+                                take_attendence_frame.pack(side=TOP,expand=YES)
+                                table_labels = Label(take_attendence_frame,text="Select attendence table  ",font=("'Lobster 25 "), bg="white", pady=15)
                                 table_labels.grid(row=0, column=0)
 
                                 table_cliked = StringVar()
 
-                                table_combo = ttk.Combobox(take_attendence_frame,value =data,font=('Lobster 14 bold'),width="20")
+                                table_combo = ttk.Combobox(take_attendence_frame,value =data,font=("Lobster 15 "))
                                 table_combo.current(0)
                                 table_combo.grid(row=0, column=1, columnspan=20)
 
-                                submit_button = Button(take_attendence_frame,text="Take attendence", pady=10, command=take_attendence)
-                                submit_button.grid(row=4,column=1)
+                                submit_button = Button(take_attendence_frame,text="Take attendence", command=take_attendence,font=("Lobster 17 bold "),bg="#1A73E8",fg ="#F9F2FA", cursor="hand2")
+                                submit_button.grid(row=4,column=1,padx=20,pady=25,ipadx=20,ipady=3)
 
                             login_frame.destroy()
                             querry_string = "SELECT name,ssid FROM lecture_details WHERE ssid =%s"
                             my_cursor.execute(querry_string,(usn_no,))
                             record = my_cursor.fetchall()
 
-                            lecture_frame = Frame(root, height="800", width="1000")
+                            lecture_frame = Frame(root, height="800", width="1000",bg ="white")
                             lecture_frame.pack(side=TOP, expand=YES)
 
                             img = ImageTk.PhotoImage(Image.open(f"Photos\\{usn_no}.png"))
                             pic_frame = Frame(lecture_frame)
-                            pic_label =Label(pic_frame,image=img)
+                            pic_label =Label(pic_frame,image=img,bg="white")
                             pic_label.pack()
                             pic_frame.grid(row=0, column=0)
 
-                            text_frame = Frame(lecture_frame)
-                            L_username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
-                            L_username_label.grid(row=0, column=0)
+                            text_frame = Frame(lecture_frame,bg="white")
+                            L_username_label = Label(text_frame,text=f"Name : {record[0][0]}",font=("Lobster 25"), bg="white",pady=15)
+                            L_username_label.grid(row=0, column=0,sticky=W)
 
-                            L_username_name_label = Label(text_frame,text=f"{record[0][0]}", font=('Lobster 30 bold'), pady=30)
-                            L_username_name_label.grid(row=0, column=1)
+                            lecture_label = Label(text_frame,text=f"Lecture id : {record[0][1]}", font=("Lobster 25 "), bg="white",pady=15)
+                            lecture_label.grid(row=1, column=0,sticky=W)
 
-                            lecture_label = Label(text_frame,text="Lecture id :", font=('Lobster 30 bold'), pady=30)
-                            lecture_label.grid(row=1, column=0)
-
-                            lecture_id_label = Label(text_frame, text=f"{record[0][1]}", font=('Lobster 30 bold'),pady=30)
-                            lecture_id_label.grid(row=1, column=1)
-
-                            funtionality_label = Label(text_frame,text="Funtionality", font=('Lobster 40 bold'),pady=30)
-                            funtionality_label.grid(row=2, column=0)
+                            funtionality_label = Label(text_frame,text="    Funtionality", font=('Lobster 30 '),bg="white",pady=20)
+                            funtionality_label.grid(row=2, column=0,sticky=W)
 
                             text_frame.grid(row=1, column=0)
 
-                            button_frame = Frame(lecture_frame)
+                            button_frame = Frame(lecture_frame,bg="white")
 
-                            add_student_button = Button(button_frame,text="Add student",width="20",height ="3",bg="blue", command=add_student)
-                            add_student_button.grid(row=3,column=0,pady=30,padx=15)
+                            add_student_button = Button(button_frame,text="Add student",font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2", command=add_student)
+                            add_student_button.grid(row=3,column=0,padx=20,pady=25,ipadx=50,ipady=8)
 
-                            attn_records_button = Button(button_frame,text="Attendence Record",width="20",height ="3",bg="blue", command=attn_records)
-                            attn_records_button.grid(row=3,column=1,pady=30,padx=15)
+                            attn_records_button = Button(button_frame,text="Attendence Record",font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2", command=attn_records)
+                            attn_records_button.grid(row=3,column=1,padx=20,pady=25,ipadx=15,ipady=8)
 
-                            take_attn_button = Button(button_frame,text="Take Attendence",width="20",height ="3",bg="blue", command=take_attn)
-                            take_attn_button.grid(row=3,column=2,pady=30,padx=15)
+                            take_attn_button = Button(button_frame,text="Take Attendence",font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2", command=take_attn)
+                            take_attn_button.grid(row=3,column=2,padx=20,pady=25,ipadx=15,ipady=8)
 
                             button_frame.grid(row=2, column=0)
                            
 
-                        elif record[0][1] =="M":
+                        elif record[0][1] =="A":
                                                 
-                            sem_no = list(range(1,9))
 
-                            # section = [
-                            #         "A",
-                            #         "B"
-                            #     ]
-                            role =[
-                                "Student",
-                                "Lecture",
-                                "Maintainer"
-                            ]
-                            subject_taken =[
-                                "1",
-                                "2",
-                                "3"
-                            ]
                             def add_records():
                                 add_records_window = Toplevel()
                                 add_records_window.title("Add records")
                                 add_records_window.geometry("600x800")
+                                add_records_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
                                 add_records_window.configure(background='#EAF8F8')
                                 
 
@@ -631,10 +607,10 @@ def submit():
                                             messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
                                         else:
                                             try:
-                                                query_string = "INSERT INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
+                                                query_string = "INSERT IGNORE INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
                                                 my_cursor.execute(query_string,(Susn_entry.get(),Ssecret_key_entry.get(),"S",Ssecret_key_entry.get()))
 
-                                                mydb.commit()
+                                                
 
                                                 query_string = "INSERT INTO student_details (name, usn, sem, sec, address, email, phone) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                                                 value=(Sname_entry.get(),Susn_entry.get(),Ssem_entry.get(),Ssection_entry.get(),Saddress_entry.get(),Semail_entry.get(),Sphone_entry.get())
@@ -643,13 +619,15 @@ def submit():
                                                 
 
                                                 mydb.commit()
-                                                image_path ="C:\\Users\\pc\\Desktop\\Atten_all\\Photos"
+                                                image_path ="C:\\Users\\pc\\Desktop\\Student-Academic-management\\Photos"
 
-                                                image = imagechoosen.save(f"{image_path}\\{Susn_entry.get()}.png")
+                                                image = imagechoosen1.save(f"{image_path}\\{Susn_entry.get()}.png")
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
                                                 add_records_window.destroy()
                                                 
                                                     
+                                            except mysql.connector.errors.DatabaseError:
+                                                messagebox.showerror("Invalid","Class and phone number should be of integer type",parent = add_records_window)
                                             except:
                                                 messagebox.showerror("Invalid","Record already exists",parent = add_records_window)
                                 
@@ -661,7 +639,7 @@ def submit():
                                             messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
                                         else:
                                             try:
-                                                query_string = "INSERT INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
+                                                query_string = "INSERT IGNORE INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
                                                 my_cursor.execute(query_string,(Lusn_entry.get(),Lsecret_key_entry.get(),"L",Lsecret_key_entry.get()))
 
                                                 mydb.commit()
@@ -674,11 +652,13 @@ def submit():
                                                 mydb.commit()
                                                 image_path ="C:\\Users\\pc\\Desktop\\Student-Academic-management\\Photos"
 
-                                                image = imagechoosen.save(f"{image_path}\\{Lusn_entry.get()}.png")
+                                                image = imagechoosen1.save(f"{image_path}\\{Lusn_entry.get()}.png")
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
                                                 add_records_window.destroy()
                                                 
-                                                    
+                                            except mysql.connector.errors.DatabaseError:
+                                                messagebox.showerror("Invalid","Phone number should be of integer type",parent = add_records_window)
+
                                             except:
                                                 messagebox.showerror("Invalid","Record already exists",parent = add_records_window)
                                 
@@ -689,8 +669,8 @@ def submit():
                                             messagebox.showwarning("Invalid","All fields are mandatory",parent =add_records_window) 
                                         else:
                                             try:
-                                                query_string = "INSERT INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
-                                                my_cursor.execute(query_string,(Musn_entry.get(),Msecret_key_entry.get(),"M",Msecret_key_entry.get()))
+                                                query_string = "INSERT IGNORE INTO login (usn,password,role,security_key) VALUES(%s, %s, %s, %s)"
+                                                my_cursor.execute(query_string,(Musn_entry.get(),Msecret_key_entry.get(),"A",Msecret_key_entry.get()))
 
                                                 mydb.commit()
 
@@ -700,44 +680,33 @@ def submit():
                                                 my_cursor.execute(query_string,value)
 
                                                 mydb.commit()
-                                                image_path ="C:\\Users\\pc\\Desktop\\Atten_all\\Photos"
+                                                image_path ="C:\\Users\\pc\\Desktop\\Student-Academic-management\\Photos"
 
-                                                image = imagechoosen.save(f"{image_path}\\{Musn_entry.get()}.png")
+                                                image = imagechoosen1.save(f"{image_path}\\{Musn_entry.get()}.png")
                                                 response =messagebox.showinfo("Added successfully","Record has been added to database",parent =add_records_window)
                                                 add_records_window.destroy()
                                                 
-                                                    
+                                            except mysql.connector.errors.DatabaseError:
+                                                messagebox.showerror("Invalid","Phone number should be of integer type",parent = add_records_window)    
                                             except:
                                                 messagebox.showerror("Invalid","Record already exists",parent = add_records_window)
                                 
                                     
                                 def add_photo():
                                     global photo
-                                    global imagechoosen
+                                    global imagechoosen1
                                     pic_frame.filename = filedialog.askopenfilename(initialdir=r"C:\\Users\\pc\\Desktop\\Dbms\\USN_Photos",title = "Select Photo",filetypes=(("jpg file","*.jpg"),("All files","*.*")))
 
                                     imagechoosen =Image.open(pic_frame.filename)
-                                    photo = ImageTk.PhotoImage(Image.open(pic_frame.filename))
+                                    newsize=(200,250)
+                                    imagechoosen1 = imagechoosen.resize(newsize)
+                                    photo = ImageTk.PhotoImage(imagechoosen1)
                                     
                                     my_image_label = Label(pic_frame,image=photo).grid(row=0, column=0)
                                     
 
                                     
-                                # def section_selected(event):
-                                #     global section_click
-                                #     section_click = section_cliked.get()
-                                #     # return section_click
-                                #     print(section_click)
-
-                                # def class_selected(event):
-                                #     global class_click
-                                #     class_click = class_clicked.get()
-                                #     # return class_click
-                                #     print(class_click)
-
-
-
-                                    
+                                
 
                                 add_details_frame = Frame(add_records_window, height="800", width="1000", bg="white")
                                 add_details_frame.pack(side=TOP, expand=YES)
@@ -752,14 +721,10 @@ def submit():
                                 radio_frame = Frame(text_frame_header,bg="white")
                                 def clicked(value):
                                     if(value==1):
-                                        # var.set("1")
                                         student_detais()
-                                    elif (value==2):
-                                        # var.set("2")
-                                        
+                                    elif (value==2):                                        
                                         lecture_details()
                                     elif (value==3):
-                                        # var.set("3")
                                         maintainer_details()
                                         
                                 var = IntVar()
@@ -786,69 +751,51 @@ def submit():
                                     text_frame = Frame(text_frame_header,bg="white")
                                     Sname_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
                                     Sname_label.grid(row=1, column=0)
-                                    Sname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Sname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Sname_entry.grid(row=1, column=1)
 
-                                    Susn_label = Label(text_frame,text="USN", font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Susn_label = Label(text_frame,text="Roll No", font=('Lobster 15 bold'),pady=10,bg='white')
                                     Susn_label.grid(row=2, column=0)
-                                    Susn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Susn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Susn_entry.grid(row=2, column=1)
 
-                                    Ssem_label = Label(text_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
+                                    Ssem_label = Label(text_frame,text="Class", font=('Lobster 15 bold'),pady=10,bg='white')
                                     Ssem_label.grid(row=3, column=0)
 
-                                    Ssem_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Ssem_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Ssem_entry.grid(row=3, column=1)
-
-                                    # class_clicked = StringVar()
-                                    # class_clicked.set(sem_no[0])
-
-                                    # class_combo = ttk.Combobox(text_frame,value =sem_no,font=('Lobster 14 bold'),width="20")
-                                    # class_combo.current(0)
-                                    # class_combo.bind("<<ComboboxSelected>>", class_selected)
-                                    # class_combo.grid(row=3, column=1, columnspan=20)
-
                                     
-
                                     Ssection_label = Label(text_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
                                     Ssection_label.grid(row=4, column=0)
 
-                                    Ssection_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Ssection_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Ssection_entry.grid(row=4, column=1)
 
 
-                                    # section_cliked = StringVar()
-                                    # section_cliked.set(section[0])
-
-                                    # section_combo = ttk.Combobox(text_frame,value =section,font=('Lobster 14 bold'),width="20")
-                                    # section_combo.current(0)
-                                    # section_combo.bind("<<ComboboxSelected>>", section_selected)
-                                    # section_combo.grid(row=4, column=1)
-
                                     Saddress_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
                                     Saddress_label.grid(row=5, column=0)
-                                    Saddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Saddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Saddress_entry.grid(row=5, column=1)
 
                                     Semail_label = Label(text_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
                                     Semail_label.grid(row=6, column=0)
-                                    Semail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Semail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Semail_entry.grid(row=6, column=1)
 
 
                                     Sphone_label = Label(text_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
                                     Sphone_label.grid(row=7, column=0)
-                                    Sphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Sphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Sphone_entry.grid(row=7, column=1)
 
 
                                     Ssecret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
                                     Ssecret_key_label.grid(row=8,column=0)
-                                    Ssecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Ssecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Ssecret_key_entry.grid(row=8, column=1)
 
-                                    submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
-                                    submit_button.grid(row=9, column=1)
+                                    submit_button =Button(text_frame,text="Submit", command=submit, font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                    submit_button.grid(row=9, column=1,padx=20,pady=25,ipadx=15,ipady=4)
 
                                     text_frame.grid(row=1, column=0)
 
@@ -866,36 +813,36 @@ def submit():
                                     text_frame = Frame(text_frame_header,bg="white")
                                     name_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
                                     name_label.grid(row=1, column=0)
-                                    Lname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Lname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Lname_entry.grid(row=1, column=1)
 
                                     usn_label = Label(text_frame,text="SSID", font=('Lobster 15 bold'),pady=10,bg='white')
                                     usn_label.grid(row=2, column=0)
-                                    Lusn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Lusn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Lusn_entry.grid(row=2, column=1)
                                 
                                     phone_label = Label(text_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
                                     phone_label.grid(row=3, column=0)
-                                    Lphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Lphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Lphone_entry.grid(row=3, column=1)
 
                                     email_label = Label(text_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
                                     email_label.grid(row=4, column=0)
-                                    Lemail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Lemail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Lemail_entry.grid(row=4, column=1)
                                     
                                     address_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
                                     address_label.grid(row=5, column=0)
-                                    Laddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Laddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Laddress_entry.grid(row=5, column=1)
 
                                     Lsecret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
                                     Lsecret_key_label.grid(row=6,column=0)
-                                    Lsecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Lsecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Lsecret_key_entry.grid(row=6, column=1)
 
-                                    submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
-                                    submit_button.grid(row=7, column=1)
+                                    submit_button =Button(text_frame,text="Submit", command=submit, font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                    submit_button.grid(row=7, column=1,padx=20,pady=25,ipadx=15,ipady=4)
 
                                     text_frame.grid(row=1, column=0)
 
@@ -913,259 +860,299 @@ def submit():
 
                                     name_label = Label(text_frame,text="Name", font=('Lobster 15 bold'),pady=10,bg='white')
                                     name_label.grid(row=1, column=0)
-                                    Mname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Mname_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Mname_entry.grid(row=1, column=1)
 
-                                    usn_label = Label(text_frame,text="MID", font=('Lobster 15 bold'),pady=10,bg='white')
+                                    usn_label = Label(text_frame,text="AID", font=('Lobster 15 bold'),pady=10,bg='white')
                                     usn_label.grid(row=2, column=0)
-                                    Musn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Musn_entry = Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Musn_entry.grid(row=2, column=1)
 
                                     phone_label = Label(text_frame,text="Phone",font=('Lobster 15 bold'),pady=10,bg='white')
                                     phone_label.grid(row=3, column=0)
-                                    Mphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Mphone_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Mphone_entry.grid(row=3, column=1)
 
                                     email_label = Label(text_frame,text="Email",font=('Lobster 15 bold'),pady=10,bg='white')
                                     email_label.grid(row=4, column=0)
-                                    Memail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Memail_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Memail_entry.grid(row=4, column=1)
                                     
                                     address_label = Label(text_frame,text="Address",font=('Lobster 15 bold'),pady=10,bg='white')
                                     address_label.grid(row=5, column=0)
-                                    Maddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'))
+                                    Maddress_entry =Entry(text_frame, width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Maddress_entry.grid(row=5, column=1)
 
                                     Msecret_key_label = Label(text_frame,text="Secret key",font=('Lobster 15 bold'),pady=10,bg='white')
                                     Msecret_key_label.grid(row=6,column=0)
-                                    Msecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'))
+                                    Msecret_key_entry = Entry(text_frame,width="22",font=('Lobster 15 bold'),highlightthickness=2, cursor="hand2")
                                     Msecret_key_entry.grid(row=6, column=1)
 
-                                    submit_button =Button(text_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
-                                    submit_button.grid(row=7, column=1)
+                                    submit_button =Button(text_frame,text="Submit", command=submit, font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                    submit_button.grid(row=7, column=1,padx=20,pady=25,ipadx=15,ipady=4)
 
                                     text_frame.grid(row=1, column=0)
 
                                 text_frame_header.grid(row=1, column=0)
                                 student_detais()
 
-                            def update_records():
-                                def submit():
-                                    try:
-                                        entered_usn = usn_entry.get()
-                                        querry_string = "SELECT role FROM login WHERE usn =%s"
-                                        my_cursor.execute(querry_string,(entered_usn,))
-                                        record = my_cursor.fetchall()
-
-                                        if record[0][0]=="L":
-                                            global Lupdate_image
+                            def alter_records():
+                                def delete_record():
+                                    entered_usn = reg_entry.get()
+                                    if entered_usn=="":
+                                        messagebox.showerror("Invalid","All fields are mandatory",parent =update_records_window)
+                                    else:
+                                        try: 
+                                            query ="SELECT * FROM login WHERE usn=%s"  
+                                            my_cursor.execute(query,(entered_usn,))
                                             
-                                            usn_frame.destroy()
-                                            def update():
-                                                
-                                                value=[]
-                                                i=0
-                                                for entry_detail in L_entry_details:
-                                                    i+=1
-                                                    if entry_detail.get()=="":
-                                                         messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
-                                                    else:
-                                                        if i==2:
-                                                            ssid =entry_detail.get()
-                                                            value.append(entry_detail.get())
-                                                        # print(entry_detail.get())
-                                                        else:
-                                                            value.append(entry_detail.get())
-                                                
-                                                value.append(ssid)
-                                                # print(value)
-                                                querry_string = "UPDATE lecture_details SET name=%s, ssid= %s, phone=%s, email=%s, address=%s WHERE ssid =%s"
+                                            querry_string = "DELETE FROM login WHERE usn =%s"
+                                            my_cursor.execute(querry_string,(entered_usn,))
+                                            mydb.commit()
+                                            
+                                            messagebox.showinfo("Deleted successfully","Record has been deleted from database",parent =update_records_window)
+                                            update_records_window.destroy()
+                                        except:
+                                            messagebox.showerror("Invalid","Entered USN or SSID not exists!")
 
-                                                my_cursor.execute(querry_string,tuple(value))
 
-                                                mydb.commit()
-                                                messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
-                                                update_records_window.destroy()
-
-                                            querry_string = "SELECT name,ssid,phone,email,address FROM lecture_details WHERE ssid =%s"
+                                def update_record():
+                                    entered_usn = reg_entry.get()
+                                    if entered_usn=="":
+                                        messagebox.showerror("Invalid","All fields are mandatory",parent =update_records_window)
+                                    else:
+                                        try:
+                                            
+                                            querry_string = "SELECT role FROM login WHERE usn =%s"
                                             my_cursor.execute(querry_string,(entered_usn,))
                                             record = my_cursor.fetchall()
 
-                                            update_frame = Frame(update_records_window)
-                                            Lupdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
-                                        
-                                            pic_label =Label(update_frame,image=Lupdate_image)
-                                            pic_label.grid(row=0, column=0)
-
-                                            lecture_details_labels =["Name","SSID","Phone","Email","Address"]
-
-                                            i=1
-                                            for label_details in lecture_details_labels:
-                                                my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
-                                                my_label.grid(row=i, column=0)
-                                                i+=1
-
-                                            L_entry_details =[]
-                                            for iterator in range(1,6):
-                                                my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                                my_entry.insert(0,f"{record[0][iterator-1]}")
-                                                my_entry.grid(row=iterator, column=1)
-                                                L_entry_details.append(my_entry)
-
-                                           
-                                            update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
-                                            update_button.grid(row=6, column=1)
-                                            update_frame.grid(row=0,column=0)
-
-                                        elif record[0][0]=="M":
-                                            global Mupdate_image
-                                            
-                                            usn_frame.destroy()
-                                            def update():
-                                                value=[]
-                                                i=0
-                                                for entry_detail in A_entry_details:
-                                                    i+=1
-                                                    if entry_detail.get()=="":
-                                                         messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
-                                                    else:
-                                                        if i==2:
-                                                            aid =entry_detail.get()
-                                                            value.append(entry_detail.get())
-                                                        # print(entry_detail.get())
-                                                        else:
-                                                            value.append(entry_detail.get())
+                                            if record[0][0]=="L":
+                                                global Lupdate_image
                                                 
-                                                value.append(aid)
-                                                # print(value)
-                                               
-                                                querry_string = "UPDATE admin_details SET name=%s, aid= %s, phone=%s, email=%s, address=%s WHERE aid =%s"
-                                                my_cursor.execute(querry_string,tuple(value))
-                                                                                         
-                                                mydb.commit()
-                                                messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
-                                                update_records_window.destroy()
-
-         
-                                            querry_string = "SELECT name,aid,phone,email,address FROM admin_details WHERE aid =%s"
-                                            my_cursor.execute(querry_string,(entered_usn,))
-                                            record = my_cursor.fetchall()
-
-                                            update_frame = Frame(update_records_window)
-                                            Mupdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
-                                        
-                                            pic_label =Label(update_frame,image=Mupdate_image)
-                                            pic_label.grid(row=0, column=0)
-
-                                            admin_details_labels =["Name","AID","Phone","Email","Address"]
-
-                                            i=1
-                                            for label_details in admin_details_labels:
-                                                my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
-                                                my_label.grid(row=i, column=0)
-                                                i+=1
-
-                                            A_entry_details =[]
-                                            for iterator in range(1,6):
-                                                my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                                my_entry.insert(0,f"{record[0][iterator-1]}")
-                                                my_entry.grid(row=iterator, column=1)
-                                                A_entry_details.append(my_entry)
-
-                                            
-                                            update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
-                                            update_button.grid(row=6, column=1)
-                                            update_frame.grid(row=0,column=0)
-
-                                        if record[0][0]=="S":
-                                            global Supdate_image
-                                            
-                                            usn_frame.destroy()
-                                            def update():
-                                                value=[]
-                                                i=0
-                                                for entry_detail in S_entry_details:
-                                                    i+=1
-                                                    if entry_detail.get()=="":
-                                                         messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
-                                                    else:
-                                                        if i==2:
-                                                            usn =entry_detail.get()
-                                                            value.append(entry_detail.get())
-                                                        # print(entry_detail.get())
-                                                        else:
-                                                            value.append(entry_detail.get())
-                                                
-                                                value.append(usn)
-                                                # print(value)
-                                               
-                                                querry_string = "UPDATE student_details SET name=%s, usn= %s, sem = %s, sec=%s, phone=%s, email=%s, address=%s WHERE usn =%s"
+                                                usn_frame.destroy()
+                                                def update():
                                                     
-                                                my_cursor.execute(querry_string,tuple(value))
+                                                    value=[]
+                                                    i=0
+                                                    for entry_detail in L_entry_details:
+                                                        i+=1
+                                                        if entry_detail.get()=="":
+                                                            messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                        else:
+                                                            if i==2:
+                                                                ssid =entry_detail.get()
+                                                                value.append(entry_detail.get())
+                                                            # print(entry_detail.get())
+                                                            else:
+                                                                value.append(entry_detail.get())
+                                                    
+                                                    value.append(ssid)
+                                                    # print(value)
+                                                    querry_string = "UPDATE lecture_details SET name=%s, ssid= %s, phone=%s, email=%s, address=%s WHERE ssid =%s"
 
-                                                mydb.commit()
-                                                messagebox.showinfo("Added successfully","Record has been added to database",parent =update_records_window)
-                                                update_records_window.destroy()
+                                                    my_cursor.execute(querry_string,tuple(value))
 
-         
-                                            querry_string = "SELECT name,usn,sem,sec,phone,email,address FROM student_details WHERE usn =%s"
-                                            my_cursor.execute(querry_string,(entered_usn,))
-                                            record = my_cursor.fetchall()
+                                                    mydb.commit()
+                                                    messagebox.showinfo("Update successfully","Record has been updated to database",parent =update_records_window)
+                                                    update_records_window.destroy()
 
-                                            update_frame = Frame(update_records_window)
-                                            Supdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
-                                        
-                                            pic_label =Label(update_frame,image=Supdate_image)
-                                            pic_label.grid(row=0, column=0)
+                                                querry_string = "SELECT name,ssid,phone,email,address FROM lecture_details WHERE ssid =%s"
+                                                my_cursor.execute(querry_string,(entered_usn,))
+                                                record = my_cursor.fetchall()
+                                                update_entire_frame = Frame(update_records_window,bg ="white")
+                                                update_entire_frame.pack(side=TOP, expand=YES)
+
+                                                update_frame = Frame(update_entire_frame,bg ="white")
+                                                photo_frame = Frame(update_entire_frame,bg ="white")
+                                                Lupdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
                                             
-                                            student_details_labels =["Name","USN","Sem","Section","Phone","Email","Address"]
+                                                pic_label =Label(photo_frame,image=Lupdate_image,bg="white")
+                                                pic_label.pack(side=TOP, expand=YES)
 
-                                            i=1
-                                            for label_details in student_details_labels:
-                                                my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
-                                                my_label.grid(row=i, column=0)
-                                                i+=1
+                                                lecture_details_labels =["Name","SSID","Phone","Email","Address"]
 
-                                            S_entry_details =[]
+                                                i=1
+                                                for label_details in lecture_details_labels:
+                                                    my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
+                                                    my_label.grid(row=i, column=0)
+                                                    i+=1
 
-                                            for iterator in range(1,8):
-                                                my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'))
-                                                my_entry.insert(0,f"{record[0][iterator-1]}")
-                                                my_entry.grid(row=iterator, column=1)
-                                                S_entry_details.append(my_entry)
-
+                                                L_entry_details =[]
+                                                for iterator in range(1,6):
+                                                    my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'),bg="white")
+                                                    my_entry.insert(0,f"{record[0][iterator-1]}")
+                                                    my_entry.grid(row=iterator, column=1)
+                                                    L_entry_details.append(my_entry)
 
                                             
-                                            update_button =Button(update_frame,text="Update",   command=update, bg="light blue",width="25",height ="3")
-                                            update_button.grid(row=8, column=1)
-                                            update_frame.grid(row=0,column=0)
-                                    except:
-                                        messagebox.showerror("Invalid","Entered USN or SSID not exists!")
-                                        update_records_window.destroy()
+                                                update_button =Button(update_frame,text="Update",command=update,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                                update_button.grid(row=6, column=1)
+                                                photo_frame.grid(row=0,column=0)
+                                                update_frame.grid(row=1,column=0)
+
+                                            elif record[0][0]=="A":
+                                                global Mupdate_image
+                                                
+                                                usn_frame.destroy()
+                                                def update():
+                                                    value=[]
+                                                    i=0
+                                                    for entry_detail in A_entry_details:
+                                                        i+=1
+                                                        if entry_detail.get()=="":
+                                                            messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                        else:
+                                                            if i==2:
+                                                                aid =entry_detail.get()
+                                                                value.append(entry_detail.get())
+                                                            # print(entry_detail.get())
+                                                            else:
+                                                                value.append(entry_detail.get())
+                                                    
+                                                    value.append(aid)
+                                                    # print(value)
+                                                
+                                                    querry_string = "UPDATE admin_details SET name=%s, aid= %s, phone=%s, email=%s, address=%s WHERE aid =%s"
+                                                    my_cursor.execute(querry_string,tuple(value))
+                                                                                            
+                                                    mydb.commit()
+                                                    messagebox.showinfo("Update successfully","Record has been updated to database",parent =update_records_window)
+                                                    update_records_window.destroy()
+
+            
+                                                querry_string = "SELECT name,aid,phone,email,address FROM admin_details WHERE aid =%s"
+                                                my_cursor.execute(querry_string,(entered_usn,))
+                                                record = my_cursor.fetchall()
+
+                                                update_entire_frame = Frame(update_records_window,bg ="white")
+                                                update_entire_frame.pack(side=TOP, expand=YES)
+
+                                                update_frame = Frame(update_entire_frame,bg ="white")
+                                                photo_frame = Frame(update_entire_frame,bg ="white")
+                                                Mupdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
+                                            
+                                                pic_label =Label(photo_frame,image=Mupdate_image,bg="white")
+                                                pic_label.pack(side=TOP, expand=YES)
+
+                                                admin_details_labels =["Name","AID","Phone","Email","Address"]
+
+                                                i=1
+                                                for label_details in admin_details_labels:
+                                                    my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
+                                                    my_label.grid(row=i, column=0)
+                                                    i+=1
+
+                                                A_entry_details =[]
+                                                for iterator in range(1,6):
+                                                    my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'),bg="white")
+                                                    my_entry.insert(0,f"{record[0][iterator-1]}")
+                                                    my_entry.grid(row=iterator, column=1)
+                                                    A_entry_details.append(my_entry)
+
+                                                
+                                                update_button =Button(update_frame,text="Update",   command=update,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                                update_button.grid(row=6, column=1)
+                                                photo_frame.grid(row=0,column=0)
+                                                update_frame.grid(row=1,column=0)
+
+                                            if record[0][0]=="S":
+                                                global Supdate_image
+                                                
+                                                usn_frame.destroy()
+                                                def update():
+                                                    value=[]
+                                                    i=0
+                                                    for entry_detail in S_entry_details:
+                                                        i+=1
+                                                        if entry_detail.get()=="":
+                                                            messagebox.showwarning("Invalid","All fields are mandatory",parent =update_records_window)
+                                                        else:
+                                                            if i==2:
+                                                                usn =entry_detail.get()
+                                                                value.append(entry_detail.get())
+                                                            # print(entry_detail.get())
+                                                            else:
+                                                                value.append(entry_detail.get())
+                                                    
+                                                    value.append(usn)
+                                                    # print(value)
+                                                
+                                                    querry_string = "UPDATE student_details SET name=%s, usn= %s, sem = %s, sec=%s, phone=%s, email=%s, address=%s WHERE usn =%s"
+                                                        
+                                                    my_cursor.execute(querry_string,tuple(value))
+
+                                                    mydb.commit()
+                                                    messagebox.showinfo("update successfully","Record has been updated to database",parent =update_records_window)
+                                                    update_records_window.destroy()
+
+            
+                                                querry_string = "SELECT name,usn,sem,sec,phone,email,address FROM student_details WHERE usn =%s"
+                                                my_cursor.execute(querry_string,(entered_usn,))
+                                                record = my_cursor.fetchall()
+                                                update_entire_frame = Frame(update_records_window,bg ="white")
+                                                update_entire_frame.pack(side=TOP, expand=YES)
+
+                                                update_frame = Frame(update_entire_frame,bg ="white")
+                                                photo_frame = Frame(update_entire_frame,bg ="white")
+                                                Supdate_image = ImageTk.PhotoImage(Image.open(f"Photos\\{record[0][1]}.png"))
+                                            
+                                                pic_label =Label(photo_frame,image=Supdate_image,bg="white")
+                                                pic_label.pack(side=TOP, expand=YES)
+                                                
+                                                student_details_labels =["Name","USN","Sem","Section","Phone","Email","Address"]
+
+                                                i=1
+                                                for label_details in student_details_labels:
+                                                    my_label = Label(update_frame,text=f"{label_details}", font=('Lobster 15 bold'),pady=10,bg='white')
+                                                    my_label.grid(row=i, column=0)
+                                                    i+=1
+
+                                                S_entry_details =[]
+
+                                                for iterator in range(1,8):
+                                                    my_entry = Entry(update_frame, width="22",font=('Lobster 15 bold'),bg="white")
+                                                    my_entry.insert(0,f"{record[0][iterator-1]}")
+                                                    my_entry.grid(row=iterator, column=1)
+                                                    S_entry_details.append(my_entry)
+
+
+                                                
+                                                update_button =Button(update_frame,text="Update",   command=update,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                                update_button.grid(row=8, column=1)
+                                                photo_frame.grid(row=0,column=0)
+                                                update_frame.grid(row=1,column=0)
+                                        except:
+                                            messagebox.showerror("Invalid","Entered USN or SSID not exists!")
+                                            update_records_window.destroy()
 
 
 
                                 
 
                                 update_records_window = Toplevel()
-                                update_records_window.title("Update records")
-                                update_records_window.geometry("600x800")
+                                update_records_window.title("Alter records")
+                                update_records_window.geometry("600x750")
+                                update_records_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
                                 update_records_window.configure(background='#EAF8F8')
                                 
 
-                                usn_frame = Frame(update_records_window)
-                                usn_label = Label(usn_frame,text="Enter USN or SSID", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
+                                usn_frame = Frame(update_records_window,bg = "white")
+                                
+                                usn_label = Label(usn_frame,text="Enter Reg. ID", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
                                 usn_label.grid(row=0, column=0)
-                                usn_entry = Entry(usn_frame, width="17",font=('Lobster 20 bold'))
-                                usn_entry.grid(row=0, column=1,padx=10)
+                                reg_entry = Entry(usn_frame, width="17",font=('Lobster 20 bold'),highlightthickness=2,  cursor="hand2")
+                                reg_entry.grid(row=0, column=1,padx=10)
 
                                 
 
-                                submit_button =Button(usn_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
-                                submit_button.grid(row=1, column=1)
-                                usn_frame.pack()
+                                delete_button =Button(usn_frame,text="Delete", command=delete_record,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                delete_button.grid(row=1, column=0,padx=20,pady=25,ipadx=15,ipady=4,sticky=E)
+                                update_button =Button(usn_frame,text="Update", command=update_record,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                update_button.grid(row=1, column=1,padx=20,pady=25,ipadx=15,ipady=4)
+                                usn_frame.pack(side=TOP, expand=YES)
                                 
-                            def add_subjects():
+                            def assign_lecture():
                                 def submit():
                                     if ssid_entry.get()=="" or sem_entry.get()=="" or section_entry.get()=="" or subcode_entry.get()=="" :
                                         messagebox.showwarning("Invalid","All fields are mandatory",parent =add_subjects_window) 
@@ -1189,7 +1176,8 @@ def submit():
 
                                                     my_cursor.execute(f"""CREATE TABLE {table_value} (
                                                         Date varchar(20),
-                                                        Time time
+                                                        Time varchar(20),
+                                                        primary key(Date,Time)
                                                     )
                                                     """)
 
@@ -1205,53 +1193,38 @@ def submit():
 
 
                                 add_subjects_window = Toplevel()
-                                add_subjects_window.title("Update records")
+                                add_subjects_window.title("Assign Lecture")
                                 add_subjects_window.geometry("700x600")
+                                add_subjects_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
                                 add_subjects_window.configure(background='#EAF8F8')
 
-                                ssid_frame = Frame(add_subjects_window,width="600", height="500")
-                                ssid_frame.pack(side=RIGHT,expand=YES)
-                                ssid_label = Label(ssid_frame,text="Enter USN or SSID", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
+                                ssid_frame = Frame(add_subjects_window,width="600", height="500",bg ="white")
+                                ssid_frame.pack(side=TOP,expand=YES)
+                                ssid_label = Label(ssid_frame,text="Enter SSID", font=('Lobster 15 bold'),pady=10,bg='white',padx=10)
                                 ssid_label.grid(row=0, column=0)
-                                ssid_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
+                                ssid_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'),bg="white")
                                 ssid_entry.grid(row=0, column=1,padx=10)
 
-                                sem_label = Label(ssid_frame,text="Sem", font=('Lobster 15 bold'),pady=10,bg='white')
+                                sem_label = Label(ssid_frame,text="Class", font=('Lobster 15 bold'),pady=10,bg='white')
                                 sem_label.grid(row=1, column=0)
 
-                                sem_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
+                                sem_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'),bg="white")
                                 sem_entry.grid(row=1, column=1,padx=10)
 
-                                # def selected(self):
-                                #     return
-                                # sem_cliked = StringVar()
-                                # sem_cliked.set(sem_no[0])
-
-                                # sem_combo = ttk.Combobox(usn_frame,value =sem_no,font=('Lobster 14 bold'),width="20")
-                                # sem_combo.current(0)
-                                # sem_combo.bind("<<ComboboxSelected>>", selected)
-                                # sem_combo.grid(row=1, column=1, columnspan=20)
-
+                            
                                 section_label = Label(ssid_frame,text="Section", font=('Lobster 15 bold'),pady=10,bg='white')
                                 section_label.grid(row=2, column=0)
-                                section_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
+                                section_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'),bg ="white")
                                 section_entry.grid(row=2, column=1,padx=10)
-                                # sec_clicked = StringVar()
-                                # sec_clicked.set(section[0])
-
-                                # sec_combo = ttk.Combobox(usn_frame,value =section,font=('Lobster 14 bold'),width="20")
-                                # sec_combo.current(0)
-                                # sec_combo.bind("<<ComboboxSelected>>", selected)
-                                # sec_combo.grid(row=2, column=1) 
-
+                                
                                 subcode_label = Label(ssid_frame,text="Subcode", font=('Lobster 15 bold'),pady=10,bg='white')
                                 subcode_label.grid(row=3, column=0) 
 
-                                subcode_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'))
+                                subcode_entry = Entry(ssid_frame, width="17",font=('Lobster 20 bold'),bg="white")
                                 subcode_entry.grid(row=3, column=1) 
 
-                                submit_button =Button(ssid_frame,text="Submit", command=submit, bg="light blue",width="25",height ="3")
-                                submit_button.grid(row=4, column=1)
+                                submit_button =Button(ssid_frame,text="Submit", command=submit,font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2")
+                                submit_button.grid(row=4, column=1,padx=20,pady=25,ipadx=15,ipady=4)
 
                             
 
@@ -1260,7 +1233,7 @@ def submit():
                             my_cursor.execute(querry_string,(usn_no,))
                             record = my_cursor.fetchall()
 
-                            maintainer_frame = Frame(root, height="800", width="1000")
+                            maintainer_frame = Frame(root,bg="white",height="800", width="1000")
                             maintainer_frame.pack(side=TOP, expand=YES)
 
                             img = ImageTk.PhotoImage(Image.open(f"Photos\\{usn_no}.png"))
@@ -1269,45 +1242,50 @@ def submit():
                             pic_label.pack()
                             pic_frame.grid(row=0, column=0)
 
-                            text_frame = Frame(maintainer_frame)
-                            M_username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
-                            M_username_label.grid(row=0, column=0)
+                            text_frame = Frame(maintainer_frame,bg="white")
+                            M_username_label = Label(text_frame,text=f"Name : {record[0][0]}", font=("Lobster 25 "), bg="white",pady=15)
+                            M_username_label.grid(row=0, column=0,sticky=W)
 
-                            M_username_name_label = Label(text_frame,text=f"{record[0][0]}", font=('Lobster 30 bold'), pady=30)
-                            M_username_name_label.grid(row=0, column=1)
+                            # M_username_name_label = Label(text_frame,text=f"{record[0][0]}",font=("Lobster 25 bold"), bg="white",pady=15)
+                            # M_username_name_label.grid(row=0, column=1,sticky=W)
 
-                            maintainer_label = Label(text_frame,text="Admin id :", font=('Lobster 30 bold'), pady=30)
-                            maintainer_label.grid(row=1, column=0)
+                            maintainer_label = Label(text_frame,text=f"Admin id : {record[0][1]}",font=("Lobster 25"), bg="white",pady=15)
+                            maintainer_label.grid(row=1, column=0,sticky=W)
 
-                            maintainer_id_label = Label(text_frame, text=f"{record[0][1]}", font=('Lobster 30 bold'),pady=30)
-                            maintainer_id_label.grid(row=1, column=1)
+                            # maintainer_id_label = Label(text_frame, text=f"{record[0][1]}",font=("Lobster 25  bold"), bg="white",pady=15)
+                            # maintainer_id_label.grid(row=1, column=1,sticky=W)
 
-                            funtionality_label = Label(text_frame,text="Funtionality", font=('Lobster 40 bold'),pady=30)
-                            funtionality_label.grid(row=2, column=0)
+                            funtionality_label = Label(text_frame,text="      Funtionality", font=('Lobster 30 '),bg="white",pady=20)
+                            funtionality_label.grid(row=2, column=0,sticky=W)
 
                             text_frame.grid(row=1, column=0)
 
-                            button_frame = Frame(maintainer_frame)
+                            button_frame = Frame(maintainer_frame,bg="white")
 
-                            add_records_button = Button(button_frame,text="Add records",width="20",height ="3",bg="blue", command=add_records)
-                            add_records_button.grid(row=3,column=0,pady=30,padx=15)
+                            add_records_button = Button(button_frame,text="Add records",font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2", command=add_records)
+                            add_records_button.grid(row=3,column=0,padx=20,pady=25,ipadx=15,ipady=8)
 
-                            update_records_button = Button(button_frame,text="Update records",width="20",height ="3",bg="blue", command=update_records)
-                            update_records_button.grid(row=3,column=1,pady=30,padx=15)
+                            update_records_button = Button(button_frame,text="Alter records",font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2",command=alter_records)
+                            update_records_button.grid(row=3,column=1,padx=20,pady=25,ipadx=15,ipady=8)
 
-                            add_subject_button = Button(button_frame,text="Add subjects",width="20",height ="3",bg="blue", command=add_subjects)
-                            add_subject_button.grid(row=3,column=2,pady=30,padx=15)
+                            add_subject_button = Button(button_frame,text="Assign Lecture",font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2", command=assign_lecture)
+                            add_subject_button.grid(row=3,column=2,padx=20,pady=25,ipadx=15,ipady=8)
                             button_frame.grid(row=2, column=0)
 
                         elif record[0][1]== "S":
 
                             def view_attendence():
-                                student_frame.destroy()
-                                view_attendence_frame =Toplevel()
-                                view_attendence_frame.title("attendence")
-                                view_attendence_frame.geometry("800x600")
+                                
+                                view_attendence_window =Toplevel()
+                                view_attendence_window.title("Attendence Record")
+                                view_attendence_window.geometry("800x600")
+                                view_attendence_window.iconbitmap("C:\\Users\\pc\Desktop\\Student-Academic-management\\logo.ico")
+                                view_attendence_window.configure(background='#EAF8F8')
 
-                                student_frame1 = Frame(view_attendence_frame)
+                                student_frame1 = Frame(view_attendence_window,bg="#EAF8F8")
+                                attendence_label = Label(student_frame1,text=f"Attendence Report", font=("Lobster 25 "), bg='#EAF8F8',pady=15)
+                                attendence_label.grid(row=0, column=0,sticky=W)
+
                                 my_tree = ttk.Treeview(student_frame1)
                                 my_tree['columns'] = ("Subject Name","Total Class","Total Present","Pecentage")
 
@@ -1327,75 +1305,57 @@ def submit():
 
                                     
 
-
-                                my_cursor.execute("SELECT sem,sec FROM student_details WHERE usn =")
+                                query="SELECT sem,sec FROM student_details WHERE usn =%s"
+                                my_cursor.execute(query,(usn_no,))
                                 record = my_cursor.fetchall()
                                 sem = record[0][0]
                                 sec = record[0][1]
-                                my_cursor.execute(f"SELECT subcode,attendence_table_name FROM lecture_record WHERE sem ={sem} AND sec ={sec}")
+                                query2="SELECT subcode,attendence_table_name FROM lecture_record WHERE sem =%s AND sec =%s"
+                                my_cursor.execute(query2,(sem,sec))
                                 record1 = my_cursor.fetchall()
                                 subject =[]
                                 subject_table =[]
                                 #  list(record1[0][0])
-                                for item in record1:
-                                    for sub,sub_table in item:
-                                        subject.append(sub)
-                                        subject_table.append(sub_table)
+                                for item in record1:                                   
+                                        subject.append(item[0])                                    
+                                        subject_table.append(item[1])
+
+                                querry_list=[]
+                                result_list=[]
+                                i=0;
+                                # print(subject_table)
 
                                 for selected in subject_table:
-                                    my_cursor.execute(f"SHOW COLUMNS FROM {selected}")
-                                    print(selected)
-                                    record1 = my_cursor.fetchall()
+                                    result_list.append(subject[i])
+                                    my_cursor.execute(f"SELECT COUNT(*) FROM {selected}")
+                                    record2 =my_cursor.fetchall()
+                              
+                                    result_list.append(record2[0][0])
 
-                                        # my_cursor.execute(f"")
-                                        # # print(record)
-                                    i=0
-                                    usn_=[]
+                                    my_cursor.execute(f"SELECT COUNT(*) FROM {selected} WHERE {usn_no} ='p'")
+                                    record3 =my_cursor.fetchall()
+                                    # print(record2)
+                            
+                                    result_list.append(record3[0][0])
+
+                                    num = (record3[0][0]/record2[0][0])*100
+                                    percentage =  '%.2f' % num
+                                    result_list.append(percentage)
+                                    
+                                    result_tuple = tuple(result_list)
+                                    # print(result_tuple)
+                                    querry_list.insert(i,result_tuple)
+                                    result_list.clear()
+
+                                    i+=1
+                                j=0
+                                for query in querry_list:
+                                    my_tree.insert(parent='',index='end',iid=j,text="",values=query)
+                                    j+=1
+                                my_tree.grid(row=1,column=0) 
+
                                 
-                                    for records in record1:
-                                        usn_.append(record1[i][0])
-                                        i+=1
-
-                                        
-                                    usn_list =usn_[2:]
-                                    # print(usn_)
-                                    querry_list=[]
-                                    result_list=[]
-                                    i=0
-                                    for usn in usn_list:
-                                        result_list.append(usn)
-                                        my_cursor.execute(f"SELECT COUNT(*) FROM {selected}")
-                                        record2 =my_cursor.fetchall()
-                                        # print(record2)
-                                        # total_attendence_list =list(record2[0][0])
-                                        result_list.append(record2[0][0])
-
-                                        my_cursor.execute(f"SELECT COUNT(*) FROM {selected} WHERE {usn} ='p'")
-                                        record3 =my_cursor.fetchall()
-                                        # print(record2)
-                                        # total_attendence_list =list(record3[0][0])
-                                        result_list.append(record3[0][0])
-
-                                        percentage = (record3[0][0]/record2[0][0])*100
-                                        result_list.append(percentage)
-                                        result_tuple = tuple(result_list)
-                                        # print(result_tuple)
-                                        querry_list.insert(i,result_tuple)
-                                        result_list.clear()
-
-                                        i+=1
-
-                                    j=0
-                                    for query in querry_list:
-                                        my_tree.insert(parent='',index='end',iid=j,text="",values=query)
-                                        j+=1
-                                    my_tree.pack()
-
-                                        
-
-
-
-                                    student_frame1.grid(row=0,column=0) 
+                                student_frame1.pack(side=TOP,expand=YES)
 
 
 
@@ -1404,31 +1364,31 @@ def submit():
                             my_cursor.execute(querry_string,(usn_no,))
                             record = my_cursor.fetchall()
 
-                            student_frame = Frame(root, height="800", width="1000")
+                            student_frame = Frame(root, height="800", width="1000",bg="white")
                             student_frame.pack(side=TOP, expand=YES)
 
-                            text_frame = Frame(student_frame)
-                            L_username_label = Label(text_frame,text="Name :", font=('Lobster 30 bold'),pady=30)
-                            L_username_label.grid(row=0, column=0)
+                            img = ImageTk.PhotoImage(Image.open(f"Photos\\{usn_no}.png"))
+                            pic_frame = Frame(student_frame)
+                            pic_label =Label(pic_frame,image=img)
+                            pic_label.pack()
+                            pic_frame.grid(row=0, column=0)
 
-                            L_username_name_label = Label(text_frame,text=f"{record[0][0]}", font=('Lobster 30 bold'), pady=30)
-                            L_username_name_label.grid(row=0, column=1)
+                            text_frame = Frame(student_frame,bg="white")
+                            L_username_label = Label(text_frame,text=f"Name : {record[0][0]}                    ", font=("Lobster 25 "), bg="white",pady=15)
+                            L_username_label.grid(row=0, column=0,sticky=W)
 
-                            usn_label = Label(text_frame,text="USN :", font=('Lobster 30 bold'), pady=30)
-                            usn_label.grid(row=1, column=0)
+                            usn_label = Label(text_frame,text=f"USN : {record[0][1]}", font=("Lobster 25 "), bg="white",pady=15)
+                            usn_label.grid(row=1, column=0,sticky=W)
 
-                            usn_id_label = Label(text_frame, text=f"{record[0][1]}", font=('Lobster 30 bold'),pady=30)
-                            usn_id_label.grid(row=1, column=1)
-
-                            funtionality_label = Label(text_frame,text="Funtionality", font=('Lobster 40 bold'),pady=30)
-                            funtionality_label.grid(row=2, column=0)
+                            funtionality_label = Label(text_frame,text="Funtionality", font=('Lobster 30 '),bg="white",pady=20)
+                            funtionality_label.grid(row=2, column=0,sticky=W)
 
                             text_frame.grid(row=1, column=0)
 
-                            button_frame = Frame(student_frame)
+                            button_frame = Frame(student_frame,bg="white")
 
-                            view_attendece_button = Button(button_frame,text="View attendece",width="20",height ="3",bg="blue", command=view_attendence)
-                            view_attendece_button.grid(row=3,column=0,pady=30,padx=15)
+                            view_attendece_button = Button(button_frame,text="View attendece",font=("Lobster 15 bold "), bg="#1A73E8",fg ="white", cursor="hand2", command=view_attendence)
+                            view_attendece_button.grid(row=3,column=0,padx=20,pady=25,ipadx=15,ipady=8)
 
                             button_frame.grid(row=2, column=0)
 
@@ -1458,21 +1418,21 @@ def show_login_frame():
     text_frame = Frame(login_frame, bg="white")
     login_label = Label(text_frame, text="Log In", font=Font_tuple[0], bg="white", fg="#1dbcdd",pady=30, anchor=NW)
     login_label.grid(row=0, column=0)
-    username_label =Label(text_frame,text="Username :",font=("@Microsoft 25 "), bg="white",pady=15)
+    username_label =Label(text_frame,text="Username :",font=("Lobster 25 "), bg="white",pady=15)
     username_label.grid(row=1, column=0)
     
 
-    password_label =Label(text_frame,text="Password :",font=("@Microsoft 25 "), bg="white", pady=15)
+    password_label =Label(text_frame,text="Password :",font=("'Lobster 25 "), bg="white", pady=15)
     password_label.grid(row=3, column=0)
 
-    username_entry = Entry(text_frame, width=17, font=("@Microsoft 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
+    username_entry = Entry(text_frame, width=17, font=("Lobster 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
     username_entry.grid(row=1, column=1,padx=10)
 
-    password_entry = Entry(text_frame,show="*", width=17,font=("@Microsoft 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
+    password_entry = Entry(text_frame,show="*", width=17,font=("Lobster 23 "),highlightthickness=2, highlightcolor = '#8fe0ce', cursor="hand2")
     password_entry.grid(row=3, column=1,padx=10)
 
-    submit_button = Button(text_frame,text="Submit",font=("@Microsoft 15 bold "), bg="#d1ffff",fg ="black",highlightthickness=2, highlightcolor = 'red', cursor="hand2",command=submit)
-    submit_button.grid(row=5, column=1,padx=10,pady=25,ipadx=30,ipady=5)
+    submit_button = Button(text_frame,text="Submit",font=("Lobster 17 bold "), bg="#1A73E8",fg ="#F9F2FA",highlightthickness=2, highlightcolor = 'red', cursor="hand2",command=submit)
+    submit_button.grid(row=5, column=1,padx=20,pady=25,ipadx=20,ipady=3)
 
         # sign_up_button = Button(text_frame,text="Sign up",bg="blue", fg="white",font=("Ubuntu 15"),command=sign_up)
         # sign_up_button.grid(row=5, column=0,padx=10)
